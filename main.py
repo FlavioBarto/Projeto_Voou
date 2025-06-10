@@ -1,8 +1,10 @@
 import streamlit as st
 import sqlite3
 import os
+import datetime
 from Model.criar_bd_clima import csv_to_sqlite_clima
 from Model.criar_bd_voos import csv_to_sqlite_voo
+from Controller.functions_voos import faturamento_passagens_passageiros
 
 def set_page_config():
     st.set_page_config(
@@ -56,9 +58,9 @@ def main():
         if "menu_ativo" not in st.session_state:
             st.session_state.menu_ativo = "Clima"
         
-        if st.sidebar.button("☀️ Dashboard Clima", type="tertiary"):
+        if st.sidebar.button("☀️ Dashboard Clima", type="secondary"):
             st.session_state.menu_ativo = "Clima"
-        if st.sidebar.button("✈️ Dashboard Voos", type="tertiary"):
+        if st.sidebar.button("✈️ Dashboard Voos", type="secondary"):
             st.session_state.menu_ativo = "Voos"
         
         # TODO: Inserir Filtros para cada Dashboard
@@ -101,7 +103,14 @@ def main():
             if st.session_state.menu_ativo == "Voos":
                 cols = st.columns(2)
                 with cols[0]:
-                    st.write("Filtro 1 para mexer")
+                    data_hoje = datetime.date.today()
+                    periodo_selecionado = st.date_input("Selecione o período desejado:", [data_hoje, data_hoje])
+                    if len(periodo_selecionado) == 2:
+                        data_inicio, data_fim = periodo_selecionado
+                        faturamento_passagens_passageiros(data_inicio, data_fim)
+                    else:
+                        st.warning("Selecione as duas datas.")
+                        st.stop()
                 with cols[1]:
                     st.write("Filtro 2 para mexer")
 

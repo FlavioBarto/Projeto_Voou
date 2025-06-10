@@ -241,10 +241,12 @@ def popular_banco_dados(csv_path):
     conn.close()
 
 def csv_to_sqlite_voo():
-    criar_banco_dados()
-    caminho_csv = "arquivos_csv/resumo_anual_2025.csv"  
-    popular_banco_dados(caminho_csv)
-
+    try:
+        criar_banco_dados()
+        caminho_csv = "arquivos_csv/resumo_anual_2025.csv"  
+        popular_banco_dados(caminho_csv)
+    except Exception as e:
+        print(e)
 
 if __name__ == "__main__":
     csv_to_sqlite_voo()

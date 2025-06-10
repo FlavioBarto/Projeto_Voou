@@ -3,7 +3,6 @@ import sqlite3
 import os
 from Model.criar_bd_clima import csv_to_sqlite_clima
 from Model.criar_bd_voos import csv_to_sqlite_voo
-from View.clima import mapa_mundi
 
 def set_page_config():
     st.set_page_config(

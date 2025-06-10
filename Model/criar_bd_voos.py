@@ -88,7 +88,6 @@ def criar_banco_dados():
     conn.commit()
     conn.close()
     
-    print("Banco de dados criado com sucesso com todas as tabelas normalizadas!")
 
 def popular_banco_dados(csv_path):
     # Conectar ao banco de dados
@@ -181,7 +180,6 @@ def popular_banco_dados(csv_path):
                 cursor.execute('SELECT empresa_id FROM EMPRESA_AEREA WHERE sigla = ?', (row['EMPRESA (SIGLA)'],))
                 empresa_result = cursor.fetchone()
                 if empresa_result is None:
-                    print(f"Empresa não encontrada: {row['EMPRESA (SIGLA)']} - {row['EMPRESA (NOME)']}")
                     continue
                 empresa_id = empresa_result[0]
                 
@@ -198,14 +196,12 @@ def popular_banco_dados(csv_path):
                 cursor.execute('SELECT aeroporto_id FROM AEROPORTO WHERE sigla = ?', (row['AEROPORTO DE ORIGEM (SIGLA)'],))
                 origem_result = cursor.fetchone()
                 if origem_result is None:
-                    print(f"Aeroporto de origem não encontrado: {row['AEROPORTO DE ORIGEM (SIGLA)']}")
                     continue
                 origem_id = origem_result[0]
                 
                 cursor.execute('SELECT aeroporto_id FROM AEROPORTO WHERE sigla = ?', (row['AEROPORTO DE DESTINO (SIGLA)'],))
                 destino_result = cursor.fetchone()
                 if destino_result is None:
-                    print(f"Aeroporto de destino não encontrado: {row['AEROPORTO DE DESTINO (SIGLA)']}")
                     continue
                 destino_id = destino_result[0]
                 
@@ -230,9 +226,6 @@ def popular_banco_dados(csv_path):
                 ))
                 
             except Exception as e:
-                print(f"Erro ao processar linha: {_}")
-                print(f"Dados problemáticos: {row}")
-                print(f"Erro detalhado: {str(e)}")
                 conn.rollback()
                 continue
         
@@ -246,7 +239,6 @@ def popular_banco_dados(csv_path):
     
     # Fechar conexão
     conn.close()
-    print("Banco de dados populado com sucesso!")
 
 def csv_to_sqlite_voo():
     criar_banco_dados()
@@ -255,4 +247,4 @@ def csv_to_sqlite_voo():
 
 
 if __name__ == "__main__":
-    csv_to_sqlite_voo
+    csv_to_sqlite_voo()

@@ -271,17 +271,21 @@ def insert_astronomical_events():
     
     conn.commit()
 
-# Executar todas as funções de inserção
-try:
-    criar_tabelas()
-    insert_locations()
-    insert_weather_conditions()
-    insert_weather_data()
-    insert_air_quality()
-    insert_astronomical_events()
-    print("Banco de dados populado com sucesso!")
-except Exception as e:
-    print(f"Erro ao popular o banco: {e}")
-    conn.rollback()
-finally:
-    conn.close()
+def csv_to_sqlite_clima():
+    # Executar todas as funções de inserção
+    try:
+        criar_tabelas()
+        insert_locations()
+        insert_weather_conditions()
+        insert_weather_data()
+        insert_air_quality()
+        insert_astronomical_events()
+        print("Banco de dados populado com sucesso!")
+    except Exception as e:
+        print(f"Erro ao popular o banco: {e}")
+        conn.rollback()
+    finally:
+        conn.close()
+
+if __name__ == "__main__":
+    csv_to_sqlite_clima()

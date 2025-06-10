@@ -8,21 +8,23 @@ st.set_page_config(layout="wide")
 st.title("✈️ Dashboard ANAC - Voos Brasileiros")
 
 # Conexão com banco
-conn = sqlite3.connect("anac_voos_normalizado.db")
+conn = sqlite3.connect("voos_database.db")
 
 @st.cache_data
 def carregar_voos():
-    query = '''
-    SELECT v.voo_id, e.nome AS empresa, e.nacionalidade,
-           ao.nome AS origem, ad.nome AS destino,
-           v.ano, v.mes, v.natureza, v.ask, v.rpk, v.atk, v.rtk,
-           v.distancia_voada_km, v.horas_voadas, v.assentos, v.bagagem_kg
-    FROM voos v
-    JOIN empresas e ON v.empresa_id = e.empresa_id
-    JOIN rotas r ON v.rota_id = r.rota_id
-    JOIN aeroportos ao ON r.origem_id = ao.aeroporto_id
-    JOIN aeroportos ad ON r.destino_id = ad.aeroporto_id
-    '''
+    query = """
+    SELECT v.voo_id, ea.nome AS empresa, ea.nacionalidade, ao.nome AS origem, 
+    ao.pais AS pais_origem, ao.uf AS uf_origem, ad.nome AS destino,
+    ad.pais AS pais_destino, ad.uf AS uf_destino, t.ano, t.mes, 
+    v.natureza, v.grupo_voo, v.ask, v.rpk, v.atk, v.rtk,
+    v.distancia_voada_km, v.horas_voadas, v.assentos, v.bagagem_kg,
+    v.passageiros_pagos, v.passageiros_gratis, v.carga_paga_kg,
+    v.carga_gratis_kg, v.combustivel_litros FROM VOO v
+    JOIN EMPRESA_AEREA ea ON v.empresa_id = ea.empresa_id
+    JOIN AEROPORTO ao ON v.aeroporto_origem_id = ao.aeroporto_id
+    JOIN AEROPORTO ad ON v.aeroporto_destino_id = ad.aeroporto_id
+    JOIN TEMPO t ON v.tempo_id = t.tempo_id
+    """
     return pd.read_sql_query(query, conn)
 
 df = carregar_voos()

@@ -3,6 +3,7 @@ import sqlite3
 import os
 from Model.criar_bd_clima import csv_to_sqlite_clima
 from Model.criar_bd_voos import csv_to_sqlite_voo
+from View.clima import mapa_mundi
 
 def set_page_config():
     st.set_page_config(
@@ -144,7 +145,7 @@ def main():
             st.write("Gráfico 3")
         
     if menu == "Voos":
-        st.header("📑 Dashboard Voos - Principais Indicadores", divider="grey")
+        st.header("✈️ Dashboard ANAC - Voos Brasileiros", divider="grey")
         
         # TODO: Implementar KPIs
         cols = st.columns(4)

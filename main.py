@@ -72,6 +72,22 @@ def main():
         # TODO: Inserir Filtros para cada Dashboard
         st.header("⚙️ Filtros")
 
+        ano_mes_max = cursor_voo.execute("""
+            SELECT MAX(ano), 
+                (SELECT MAX(mes) FROM tempo WHERE ano = (SELECT MAX(ano) FROM tempo))
+            FROM tempo
+        """).fetchone()
+
+        ano_max_voo_int, mes_max_voo_int = ano_mes_max
+
+        ano_mes_min = cursor_voo.execute("""
+            SELECT MIN(ano), 
+                (SELECT MIN(mes) FROM tempo WHERE ano = (SELECT MIN(ano) FROM tempo))
+            FROM tempo
+        """).fetchone()
+
+        ano_min_voo_int, mes_min_voo_int = ano_mes_min
+
         if 'filtros_resetados' not in st.session_state:
             st.session_state.filtros_resetados = False
 
@@ -107,15 +123,16 @@ def main():
                     st.write("Filtro 4 para mexer")
         
             if st.session_state.menu_ativo == "Voos":
-                data_hoje = datetime.date.today()
-                periodo_selecionado = st.date_input("Selecione o período desejado:", [data_hoje, data_hoje])
-                if len(periodo_selecionado) == 2:
-                    data_inicio, data_fim = periodo_selecionado
-                    total_passageiros_pagos(conn_voo, data_inicio, data_fim)
-                    exibir_kpi_media_assentos(conn_voo, data_inicio, data_fim)
-                else:
-                    st.warning("Selecione as duas datas.")
-                    st.stop()
+                data_inicio = datetime.datetime(year=ano_min_voo_int, month=mes_min_voo_int, day=1)
+                data_fim = datetime.datetime(year=ano_max_voo_int, month=mes_max_voo_int, day=1)
+
+                if "data_inicio" not in st.session_state:
+                    st.session_state.data_inicio = data_inicio
+
+                if "data_fim" not in st.session_state:
+                    st.session_state.data_fim = data_fim
+
+                periodo_selecionado = st.date_input("Selecione o período desejado:", [data_inicio, data_fim])
 
                 cols = st.columns(2)
                 with cols[0]:
@@ -167,12 +184,12 @@ def main():
     if menu == "Voos":
         st.header("✈️ Dashboard ANAC - Voos Brasileiros", divider="grey")
         
-        data_hoje = datetime.date.today()
-        data_inicio = st.session_state.get("data_inicio", data_hoje)
-        data_fim = st.session_state.get("data_fim", data_hoje)
+        data_inicio = st.session_state.data_inicio
+        data_fim = st.session_state.data_fim
 
         try:
             passageiros_pagos = total_passageiros_pagos(conn_voo, data_inicio, data_fim)
+            porcentagem_media_assentos_cheios = exibir_kpi_media_assentos(conn_voo, data_inicio, data_fim)
         except Exception as e:
             st.error(f"Erro ao calcular os KPIs: {str(e)}")
             passageiros_pagos = 0
@@ -180,9 +197,9 @@ def main():
         # TODO: Implementar KPIs
         cols = st.columns(4)
         with cols[0]:
-            st.metric("Total de Passageiros Pagos", f"{passageiros_pagos}")
+            st.metric("Total de Passageiros Pagos", f"{int(passageiros_pagos)}")
         with cols[1]:
-            st.write("KPI 2")
+            st.metric("Porcentagem de Assentos Vagos", f"{porcentagem_media_assentos_cheios:.2f}%")
         with cols[2]:
             st.write("KPI 3")
         with cols[3]:

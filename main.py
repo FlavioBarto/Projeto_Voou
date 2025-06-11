@@ -6,6 +6,7 @@ from Model.criar_bd_clima import csv_to_sqlite_clima
 from Model.criar_bd_voos import csv_to_sqlite_voo
 from Controller.functions_voos import total_passageiros_pagos
 from Controller.kpi_media_assentos import exibir_kpi_media_assentos
+from Controller.functions_voos import taxa_media_ocupacao
 from View.clima import grafico_precipitacao_mensal
 from View.clima import grafico_umidade_pizza
 from View.clima import grafico_vento_pressao
@@ -190,6 +191,8 @@ def main():
         try:
             passageiros_pagos = total_passageiros_pagos(conn_voo, data_inicio, data_fim)
             porcentagem_media_assentos_cheios = exibir_kpi_media_assentos(conn_voo, data_inicio, data_fim)
+            media_taxa_ocupacao = taxa_media_ocupacao(conn_voo)
+
         except Exception as e:
             st.error(f"Erro ao calcular os KPIs: {str(e)}")
             passageiros_pagos = 0
@@ -201,7 +204,7 @@ def main():
         with cols[1]:
             st.metric("Porcentagem de Assentos Vagos", f"{porcentagem_media_assentos_cheios:.2f}%")
         with cols[2]:
-            st.write("KPI 3")
+            st.metric("Taxa Média Ocupação", f"{float(media_taxa_ocupacao)}%")
         with cols[3]:
             st.write("KPI 4")
 

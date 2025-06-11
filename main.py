@@ -58,9 +58,9 @@ def main():
         if "menu_ativo" not in st.session_state:
             st.session_state.menu_ativo = "Clima"
         
-        if st.sidebar.button("☀️ Dashboard Clima", type="secondary"):
+        if st.sidebar.button("☀️ Dashboard Clima", type="tertiary"):
             st.session_state.menu_ativo = "Clima"
-        if st.sidebar.button("✈️ Dashboard Voos", type="secondary"):
+        if st.sidebar.button("✈️ Dashboard Voos", type="tertiary"):
             st.session_state.menu_ativo = "Voos"
         
         # TODO: Inserir Filtros para cada Dashboard
@@ -107,7 +107,7 @@ def main():
                     periodo_selecionado = st.date_input("Selecione o período desejado:", [data_hoje, data_hoje])
                     if len(periodo_selecionado) == 2:
                         data_inicio, data_fim = periodo_selecionado
-                        faturamento_passagens_passageiros(data_inicio, data_fim)
+                        faturamento_passagens_passageiros(conn_voo, data_inicio, data_fim)
                     else:
                         st.warning("Selecione as duas datas.")
                         st.stop()

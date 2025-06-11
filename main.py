@@ -52,6 +52,14 @@ def init_db():
             st.error(f"Erro ao inicializar bancos de dados: {str(e)}")
             st.stop()
 
+def formatar_numero(numero):
+    if numero >= 1_000_000:
+        return f"{numero / 1_000_000:.1f}M"
+    elif numero >= 1_000:
+        return f"{numero / 1_000:.1f}K"
+    else:
+        return str(numero)
+
 def main():
     set_page_config()
     load_css()
@@ -132,7 +140,10 @@ def main():
                 if "data_fim" not in st.session_state:
                     st.session_state.data_fim = data_fim
 
-                periodo_selecionado = st.date_input("Selecione o período desejado:", [data_inicio, data_fim])
+                periodo_selecionado = st.date_input("Selecione o período desejado:", [data_inicio, data_fim], min_value=data_inicio, max_value=data_fim)
+
+                if len(periodo_selecionado) == 2:
+                    st.session_state.data_inicio, st.session_state.data_fim = periodo_selecionado
 
                 cols = st.columns(2)
                 with cols[0]:
@@ -197,9 +208,12 @@ def main():
         # TODO: Implementar KPIs
         cols = st.columns(4)
         with cols[0]:
-            st.metric("Total de Passageiros Pagos", f"{int(passageiros_pagos)}")
+            total_passageiros_pagos_formatado = formatar_numero(passageiros_pagos)
+            st.metric(label="Total de Passageiros Pagos", value=total_passageiros_pagos_formatado)
         with cols[1]:
-            st.metric("Porcentagem de Assentos Vagos", f"{porcentagem_media_assentos_cheios:.2f}%")
+            st.metric(label="Assentos Ocupados Por Voo",
+                      value=f"{porcentagem_media_assentos_cheios:.2f}%",
+                      help="Porcentagem de Assentos Ocupados por Voos")
         with cols[2]:
             st.write("KPI 3")
         with cols[3]:

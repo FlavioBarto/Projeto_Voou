@@ -4,13 +4,14 @@ import os
 import datetime
 from Model.criar_bd_clima import csv_to_sqlite_clima
 from Model.criar_bd_voos import csv_to_sqlite_voo
-from Controller.functions_voos import faturamento_passagens_passageiros
+from Controller.functions_voos import total_passageiros_pagos
 from Controller.kpi_media_assentos import exibir_kpi_media_assentos
 from View.clima import grafico_precipitacao_mensal
 from View.clima import grafico_umidade_pizza
 from View.clima import grafico_vento_pressao
 from View.clima import setar_pais
 from View.clima import carregar_paises_disponiveis
+
 def set_page_config():
     st.set_page_config(
         page_title="Sistema de Controle",
@@ -63,9 +64,9 @@ def main():
         if "menu_ativo" not in st.session_state:
             st.session_state.menu_ativo = "Clima"
         
-        if st.sidebar.button("☀️ Dashboard Clima", type="tertiary"):
+        if st.sidebar.button("☀️ Dashboard Clima", type="secondary"):
             st.session_state.menu_ativo = "Clima"
-        if st.sidebar.button("✈️ Dashboard Voos", type="tertiary"):
+        if st.sidebar.button("✈️ Dashboard Voos", type="secondary"):
             st.session_state.menu_ativo = "Voos"
         
         # TODO: Inserir Filtros para cada Dashboard
@@ -110,7 +111,7 @@ def main():
                 periodo_selecionado = st.date_input("Selecione o período desejado:", [data_hoje, data_hoje])
                 if len(periodo_selecionado) == 2:
                     data_inicio, data_fim = periodo_selecionado
-                    faturamento_passagens_passageiros(conn_voo, data_inicio, data_fim)
+                    total_passageiros_pagos(conn_voo, data_inicio, data_fim)
                     exibir_kpi_media_assentos(conn_voo, data_inicio, data_fim)
                 else:
                     st.warning("Selecione as duas datas.")
@@ -166,10 +167,20 @@ def main():
     if menu == "Voos":
         st.header("✈️ Dashboard ANAC - Voos Brasileiros", divider="grey")
         
+        data_hoje = datetime.date.today()
+        data_inicio = st.session_state.get("data_inicio", data_hoje)
+        data_fim = st.session_state.get("data_fim", data_hoje)
+
+        try:
+            passageiros_pagos = total_passageiros_pagos(conn_voo, data_inicio, data_fim)
+        except Exception as e:
+            st.error(f"Erro ao calcular os KPIs: {str(e)}")
+            passageiros_pagos = 0
+
         # TODO: Implementar KPIs
         cols = st.columns(4)
         with cols[0]:
-            st.write("KPI 1")
+            st.metric("Total de Passageiros Pagos", f"{passageiros_pagos}")
         with cols[1]:
             st.write("KPI 2")
         with cols[2]:

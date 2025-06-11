@@ -5,7 +5,7 @@ import datetime
 from Model.criar_bd_clima import csv_to_sqlite_clima
 from Model.criar_bd_voos import csv_to_sqlite_voo
 from Controller.functions_voos import faturamento_passagens_passageiros
-
+from Controller.kpi_media_assentos import exibir_kpi_media_assentos
 def set_page_config():
     st.set_page_config(
         page_title="Sistema de Controle",
@@ -106,6 +106,7 @@ def main():
                 if len(periodo_selecionado) == 2:
                     data_inicio, data_fim = periodo_selecionado
                     faturamento_passagens_passageiros(conn_voo, data_inicio, data_fim)
+                    exibir_kpi_media_assentos(conn_voo, data_inicio, data_fim)
                 else:
                     st.warning("Selecione as duas datas.")
                     st.stop()

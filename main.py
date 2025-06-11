@@ -6,6 +6,11 @@ from Model.criar_bd_clima import csv_to_sqlite_clima
 from Model.criar_bd_voos import csv_to_sqlite_voo
 from Controller.functions_voos import faturamento_passagens_passageiros
 from Controller.kpi_media_assentos import exibir_kpi_media_assentos
+from View.clima import grafico_precipitacao_mensal
+from View.clima import grafico_umidade_pizza
+from View.clima import grafico_vento_pressao
+from View.clima import setar_pais
+from View.clima import carregar_paises_disponiveis
 def set_page_config():
     st.set_page_config(
         page_title="Sistema de Controle",
@@ -141,13 +146,22 @@ def main():
         with cols[3]:
             st.write("KPI 4")
 
+        st.subheader("🌍 Filtro por País")
+        # Carregando os países disponíveis diretamente da base
+        paises = carregar_paises_disponiveis()
+        pais_selecionado = st.selectbox("Selecione o país", paises)
+        setar_pais(pais_selecionado)
+
         cols = st.columns(3)
         with cols[0]:
-            st.write("Gráfico 1")
+            st.write("Precipitação")
+            grafico_precipitacao_mensal()
         with cols[1]:
-            st.write("Gráfico 2")
+            st.write("Umidade")
+            grafico_umidade_pizza()
         with cols[2]:
-            st.write("Gráfico 3")
+            st.write("Pressão")
+            grafico_vento_pressao()
         
     if menu == "Voos":
         st.header("✈️ Dashboard ANAC - Voos Brasileiros", divider="grey")

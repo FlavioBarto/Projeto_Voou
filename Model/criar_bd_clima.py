@@ -271,6 +271,12 @@ def popular_banco_clima(conn, cursor):
                         ))
         
         conn.commit()
+        
+    insert_locations()
+    insert_weather_conditions()
+    insert_weather_data()
+    insert_air_quality()
+    insert_astronomical_events()
 
 def csv_to_sqlite_clima(conn_clima, cursor_clima):
     # Executar todas as funções de inserção

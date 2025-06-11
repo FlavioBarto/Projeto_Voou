@@ -1,11 +1,7 @@
 import sqlite3
 import pandas as pd
 
-def criar_banco_dados():
-    # Conectar ao banco de dados (será criado se não existir)
-    conn = sqlite3.connect('voos_database.db')
-    cursor = conn.cursor()
-    
+def criar_banco_dados(conn, cursor):    
     # Criar tabela EMPRESA_AEREA
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS EMPRESA_AEREA (
@@ -86,14 +82,9 @@ def criar_banco_dados():
     
     # Salvar as alterações e fechar a conexão
     conn.commit()
-    conn.close()
-    
 
-def popular_banco_dados(csv_path):
-    # Conectar ao banco de dados
-    conn = sqlite3.connect('voos_database.db')
-    cursor = conn.cursor()
-    
+
+def popular_banco_dados(conn, cursor, csv_path):    
     # Ler o arquivo CSV
     df = pd.read_csv(csv_path, delimiter=';', encoding="ISO-8859-1")
     
@@ -237,14 +228,12 @@ def popular_banco_dados(csv_path):
     insert_tempo()
     insert_voos()
     
-    # Fechar conexão
-    conn.close()
 
-def csv_to_sqlite_voo():
+def csv_to_sqlite_voo(conn_voo, cursor_voo):
     try:
-        criar_banco_dados()
+        criar_banco_dados(conn_voo, cursor_voo)
         caminho_csv = "arquivos_csv/resumo_anual_2025.csv"  
-        popular_banco_dados(caminho_csv)
+        popular_banco_dados(conn=conn_voo, cursor=cursor_voo, csv_path=caminho_csv)
     except Exception as e:
         print(e)
 

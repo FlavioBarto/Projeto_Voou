@@ -22,14 +22,24 @@ def load_css():
     except Exception as e:
         st.error(f"Erro ao carregar CSS: {str(e)}")
 
+try:
+    conn_voo = sqlite3.connect("voos_database.db")
+    cursor_voo = conn_voo.cursor()
+
+    conn_clima = sqlite3.connect("weather_database.db")
+    cursor_clima = conn_clima.cursor()
+except Exception as e:
+    st.error(f"Erro ao conectar aos bancos de dados: {str(e)}")
+    st.stop()
+
 def init_db():
     db_files = ["voos_database.db", "weather_database.db"]
 
     if not all(os.path.exists(db_file) for db_file in db_files) or "db_initialized" not in st.session_state:
         try:
             with st.spinner("Inicializando banco de dados..."):
-                csv_to_sqlite_clima()
-                csv_to_sqlite_voo()
+                csv_to_sqlite_clima(conn_clima, cursor_clima)
+                csv_to_sqlite_voo(conn_voo, cursor_voo)
                 st.session_state.db_initialized = True
                 st.toast("Bancos de dados inicializados com sucesso!", icon="✅")
         except Exception as e:
@@ -41,16 +51,6 @@ def main():
     load_css()
 
     init_db()
-
-    try:
-        conn_voo = sqlite3.connect("voos_database.db")
-        cursor_voo = conn_voo.cursor()
-
-        conn_clima = sqlite3.connect("weather_database.db")
-        cursor = conn_clima.cursor()
-    except Exception as e:
-        st.error(f"Erro ao conectar aos bancos de dados: {str(e)}")
-        st.stop()
 
     with st.sidebar:
         st.title("📊 Análises")
@@ -101,18 +101,14 @@ def main():
                     st.write("Filtro 4 para mexer")
         
             if st.session_state.menu_ativo == "Voos":
-                cols = st.columns(2)
-                with cols[0]:
-                    data_hoje = datetime.date.today()
-                    periodo_selecionado = st.date_input("Selecione o período desejado:", [data_hoje, data_hoje])
-                    if len(periodo_selecionado) == 2:
-                        data_inicio, data_fim = periodo_selecionado
-                        faturamento_passagens_passageiros(conn_voo, data_inicio, data_fim)
-                    else:
-                        st.warning("Selecione as duas datas.")
-                        st.stop()
-                with cols[1]:
-                    st.write("Filtro 2 para mexer")
+                data_hoje = datetime.date.today()
+                periodo_selecionado = st.date_input("Selecione o período desejado:", [data_hoje, data_hoje])
+                if len(periodo_selecionado) == 2:
+                    data_inicio, data_fim = periodo_selecionado
+                    faturamento_passagens_passageiros(conn_voo, data_inicio, data_fim)
+                else:
+                    st.warning("Selecione as duas datas.")
+                    st.stop()
 
                 cols = st.columns(2)
                 with cols[0]:

@@ -1,5 +1,6 @@
 import sqlite3
 import pandas as pd
+import os
 from datetime import datetime
 
 # Conectar ao banco de dados
@@ -278,14 +279,37 @@ def popular_banco_clima(conn, cursor):
     insert_air_quality()
     insert_astronomical_events()
 
+def verificar_bd_clima_existente(db_path='weather_database.db'):
+    """Verifica se o banco climático já foi criado e populado"""
+    if not os.path.exists(db_path):
+        return False
+    
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    
+    try:
+        # Verifica se a tabela weather_data já contém dados
+        cursor.execute("SELECT COUNT(*) FROM weather_data")
+        count = cursor.fetchone()[0]
+        return count > 0
+    except sqlite3.OperationalError:
+        return False
+    finally:
+        conn.close()
+
 def csv_to_sqlite_clima(conn_clima, cursor_clima):
-    # Executar todas as funções de inserção
+    # Verificar se o banco já foi populado
+    if verificar_bd_clima_existente():
+        # print("Banco de dados climático já existe e contém dados. Pulando a inserção.")
+        return
+    
     try:
         criar_tabelas()
         popular_banco_clima(conn=conn_clima, cursor=cursor_clima)
+        # print("Banco de dados climático criado e populado com sucesso!")
     except Exception as e:
-        print(f"Erro ao popular o banco: {e}")
-        conn.rollback()
+        print(f"Erro ao processar o banco de dados climático: {str(e)}")
+        conn_clima.rollback()
 
 
 if __name__ == "__main__":

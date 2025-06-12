@@ -11,6 +11,7 @@ from Controller.kpi_ticket_medio_voo import exibir_ticket_medio_voo
 from Controller.functions_clima import detalhe_paises
 from Controller.functions_clima import mes_temp
 from Controller.functions_clima import detalhe_climatico
+from View.voos import evolucao_mensal_demanda_e_ocupacao
 from View.clima import grafico_precipitacao_mensal
 from View.clima import grafico_umidade_pizza
 from View.clima import grafico_vento_pressao
@@ -194,6 +195,7 @@ def main():
             porcentagem_media_assentos_cheios = exibir_kpi_media_assentos(conn_voo, data_inicio, data_fim)
             media_taxa_ocupacao = taxa_media_ocupacao(conn_voo, data_inicio, data_fim)
             ticket_medio_voo = exibir_ticket_medio_voo(conn_voo, data_inicio, data_fim)
+            demanda_e_ocupacao = evolucao_mensal_demanda_e_ocupacao(conn_voo, data_inicio, data_fim)
 
         except Exception as e:
             st.error(f"Erro ao calcular os KPIs: {str(e)}")
@@ -216,7 +218,7 @@ def main():
 
         cols = st.columns(3)
         with cols[0]:
-            st.write("Gráfico 1")
+            st.pyplot(demanda_e_ocupacao)
         with cols[1]:
             st.write("Gráfico 2")
         with cols[2]:

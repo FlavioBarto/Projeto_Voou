@@ -31,8 +31,8 @@ def evolucao_mensal_demanda_e_ocupacao(conn_voo, data_inicio, data_fim):
     ax2.set_ylabel("Taxa de Ocupação (%)", color="green")
     ax2.tick_params(axis='y', labelcolor='green')
 
-    plt.title("Evolução Mensal da Demanda (RPK) e Taxa de Ocupação")
+    plt.title("Evolução Mensal da Demanda (RPK) e Taxa de Ocupação", fontsize=25)
     ax1.set_xlabel('Mês')
-    fig.autofmt_xdate()
+    plt.tight_layout()
 
-    # st.pyplot(fig)
+    return fig

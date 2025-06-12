@@ -214,7 +214,8 @@ def main():
                       help="Ticket Médio de Todos os Voos")
 
         try:
-            df_sazonal = exibir_dados_volume_passageiros_rota(conn_voo, data_inicio, data_fim)
+            # df_sazonal = exibir_dados_volume_passageiros_rota(conn_voo, data_inicio, data_fim)
+            demanda_e_ocupacao = evolucao_mensal_demanda_e_ocupacao(conn_voo, data_inicio, data_fim)
         except Exception as e:
             st.error(f"Erro ao calcular os gráficos: {str(e)}")
 
@@ -222,7 +223,8 @@ def main():
         with cols[0]:
             st.pyplot(demanda_e_ocupacao)
         with cols[1]:
-            plot_barras_sazonalidade(df_sazonal)
+            print()
+            # plot_barras_sazonalidade(df_sazonal)
         with cols[2]:
             st.write("Gráfico 3")
 

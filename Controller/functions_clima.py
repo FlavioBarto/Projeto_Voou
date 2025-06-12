@@ -33,7 +33,7 @@ def consultar_dados_poluentes_pais():
         JOIN location l ON wd.location_id = l.location_id
         JOIN air_quality aq ON wd.weather_id = aq.weather_id
     '''
-    conn = sqlite3.connect("C:/Users/Aluno/Desktop/projeto/novo/Projeto_Voou/weather_database.db")
+    conn = sqlite3.connect("weather_database.db")
     df = pd.read_sql_query(query, conn)
     conn.close()
     return df

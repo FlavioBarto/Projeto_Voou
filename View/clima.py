@@ -96,7 +96,7 @@ def grafico_umidade_pizza(pais=None, ano=None):
         PALETA_CORES['preto_esverdeado']
     ] * 2)[:len(humidity_avg)]
 
-    fig, ax = plt.subplots(figsize=(8, 6.3))
+    fig, ax = plt.subplots(figsize=(8, 6.005))
 
     def func_autopct(pct):
         return f"{pct:.1f}%"

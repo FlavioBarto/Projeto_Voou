@@ -78,7 +78,7 @@ def main():
     init_db()
 
     with st.sidebar:
-        st.title("📊 Análises")
+        st.header("📊 Análises", divider="grey")
 
         if "menu_ativo" not in st.session_state:
             st.session_state.menu_ativo = "Clima"
@@ -89,7 +89,7 @@ def main():
             st.session_state.menu_ativo = "Voos"
        
         if st.session_state.menu_ativo == "Voos":
-            st.header("⚙️ Filtros")
+            st.header("⚙️ Filtros", divider="grey")
 
             ano_mes_max = cursor_voo.execute("""
                 SELECT MAX(ano), 

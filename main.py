@@ -14,6 +14,9 @@ from Controller.functions_clima import mes_temp
 from Controller.functions_clima import detalhe_climatico
 from Controller.grafico_sazonalidade import exibir_dados_volume_passageiros_rota
 from Controller.grafico_sazonalidade import plot_barras_sazonalidade
+from Controller.grafico_top_visitas import exibir_dados_total_viagens
+from Controller.grafico_top_visitas import plot_pizza_paises_mais_visitados
+from View.voos import evolucao_mensal_demanda_e_ocupacao
 from View.clima import grafico_precipitacao_mensal
 from View.clima import grafico_umidade_pizza
 from View.clima import grafico_vento_pressao
@@ -195,6 +198,7 @@ def main():
             porcentagem_media_assentos_cheios = exibir_kpi_media_assentos(conn_voo, data_inicio, data_fim)
             media_taxa_ocupacao = taxa_media_ocupacao(conn_voo, data_inicio, data_fim)
             ticket_medio_voo = exibir_ticket_medio_voo(conn_voo, data_inicio, data_fim)
+            demanda_e_ocupacao = evolucao_mensal_demanda_e_ocupacao(conn_voo, data_inicio, data_fim)
 
         except Exception as e:
             st.error(f"Erro ao calcular os KPIs: {str(e)}")
@@ -217,16 +221,19 @@ def main():
 
         try:
             df_sazonal = exibir_dados_volume_passageiros_rota(conn_voo, data_inicio, data_fim)
+            df_paises = exibir_dados_total_viagens(conn_voo, data_inicio, data_fim)
+            demanda_e_ocupacao = evolucao_mensal_demanda_e_ocupacao(conn_voo, data_inicio, data_fim)
         except Exception as e:
             st.error(f"Erro ao calcular os gráficos: {str(e)}")
 
-        cols = st.columns(3)
-        with cols[0]:
-            st.write("Gráfico 1")
-        with cols[1]:
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col1:
+            st.pyplot(demanda_e_ocupacao)
+        with col2:
+            plot_pizza_paises_mais_visitados(df_paises)
+        with col3:
             plot_barras_sazonalidade(df_sazonal)
-        with cols[2]:
-            st.write("Gráfico 3")
+
 
 if __name__ == "__main__":
     main()

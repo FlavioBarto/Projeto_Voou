@@ -83,9 +83,9 @@ def main():
         if "menu_ativo" not in st.session_state:
             st.session_state.menu_ativo = "Clima"
         
-        if st.sidebar.button("☀️ Dashboard Clima", type="tertiary"):
+        if st.sidebar.button("☀️ Dashboard Clima", type="secondary"):
             st.session_state.menu_ativo = "Clima"
-        if st.sidebar.button("✈️ Dashboard Voos", type="tertiary"):
+        if st.sidebar.button("✈️ Dashboard Voos", type="secondary"):
             st.session_state.menu_ativo = "Voos"
        
         if st.session_state.menu_ativo == "Voos":
@@ -183,18 +183,20 @@ def main():
         try:
             df_sazonal = exibir_dados_volume_passageiros_rota(conn_voo, data_inicio, data_fim)
             df_paises = exibir_dados_total_viagens(conn_voo, data_inicio, data_fim)
-            fig_demanda = evolucao_mensal_demanda_e_ocupacao(conn_voo, data_inicio, data_fim)
+            df_demanda, fig_demanda = evolucao_mensal_demanda_e_ocupacao(conn_voo, data_inicio, data_fim)
         except Exception as e:
             st.error(f"Erro ao calcular os gráficos: {str(e)}")
 
-        cols = st.columns(3)
-        with cols[0]:
-            st.plotly_chart(fig_demanda, use_container_width=True)
-        with cols[1]:
+        col1 = st.columns(2)
+        with col1[0]:
+            st.plotly_chart(fig_demanda)
+        with col1[1]:
             plot_barras_sazonalidade(df_sazonal)
-        with cols[2]:
+        
+        col2 = st.columns(2)
+        with col2[0]:
             plot_pizza_paises_mais_visitados(df_paises)
-        with col3:
+        with col2[1]:
             plot_barras_sazonalidade(df_sazonal)
 
 

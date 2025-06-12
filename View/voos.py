@@ -88,3 +88,9 @@ ax2.set_title("Rotas Aéreas Simuladas (sem coordenadas reais)")
 st.pyplot(fig2)
 
 conn.close()
+
+def evolucao_mensal_demanda_e_ocupacao(conn_voo):
+    query = """
+    SELECT SU
+    """
+    print()

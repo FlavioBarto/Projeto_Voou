@@ -27,9 +27,3 @@ def taxa_media_ocupacao(conn_voo, data_inicio, data_fim):
 
     df_taxa_media_ocupacao = pd.read_sql_query(query, conn_voo).iloc[0, 0]
     return df_taxa_media_ocupacao
-
-def evolucao_mensal_demanda_e_ocupacao(conn_voo):
-    query = """
-    SELECT SU
-    """
-    print()

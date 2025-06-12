@@ -82,9 +82,6 @@ def detalhe_climatico(pais):
     # Ordena e seleciona o registro mais recente do país
     ultima_temp = df_pais.sort_values('last_updated', ascending=False).iloc[0]
 
-    st.subheader(f"🌡️ Clima Atual em {pais}")
-    st.metric("Temperatura Média (°C)", f"{df_pais['temperature_celsius'].mean():.2f}")
-
     st.subheader("🧪 Níveis de Poluentes (Última Medição)")
     cols_pol = st.columns(4)
 
@@ -134,6 +131,8 @@ def mes_temp():
         title=f"Média de Temperatura Global por País ({mes}) (°C)"
     )
 
+    fig.update_layout(width=1200, height=600)
+    
     st.plotly_chart(fig, key="mapa_exibicao")
     
 

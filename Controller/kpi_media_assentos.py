@@ -1,5 +1,4 @@
 import pandas as pd
-import streamlit as st
 
 def exibir_kpi_media_assentos(conn_voo, data_inicio, data_fim):
     query_porcentagem = f"""SELECT 
@@ -23,4 +22,4 @@ def exibir_kpi_media_assentos(conn_voo, data_inicio, data_fim):
 
     media_porcentagem_assentos_ocupados_periodo = df_porcentagem_assentos_ocupados["percentual_ocupado"].mean()
     
-    st.metric(label="Porcentagem", value=f"{media_porcentagem_assentos_ocupados_periodo:.2f}%", help="Porcentagem da média de ocupação de voos")
+    return media_porcentagem_assentos_ocupados_periodo

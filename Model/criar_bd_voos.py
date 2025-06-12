@@ -1,5 +1,6 @@
-import sqlite3
 import pandas as pd
+import sqlite3
+import os
 
 def criar_banco_dados(conn, cursor):    
     # Criar tabela EMPRESA_AEREA
@@ -227,15 +228,40 @@ def popular_banco_dados(conn, cursor, csv_path):
     insert_aeroportos()
     insert_tempo()
     insert_voos()
+
+def verificar_bd_existente(db_path='voos_database.db'):
+    """Verifica se o banco de dados já foi criado e populado"""
+    if not os.path.exists(db_path):
+        return False
     
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    
+    try:
+        # Verifica se a tabela VOO já contém dados
+        cursor.execute("SELECT COUNT(*) FROM VOO")
+        count = cursor.fetchone()[0]
+        return count > 0
+    except sqlite3.OperationalError:
+        return False
+    finally:
+        conn.close()
 
 def csv_to_sqlite_voo(conn_voo, cursor_voo):
     try:
+        # Verificar se o banco já foi populado
+        if verificar_bd_existente():
+            # print("Banco de dados voos já existe e contém dados. Pulando a inserção.")
+            return
+            
         criar_banco_dados(conn_voo, cursor_voo)
         caminho_csv = "arquivos_csv/resumo_anual_2025.csv"  
         popular_banco_dados(conn=conn_voo, cursor=cursor_voo, csv_path=caminho_csv)
+        # print("Banco de dados voos criado e populado com sucesso!")
     except Exception as e:
-        print(e)
+        print(f"Erro ao processar o banco de dados voos: {str(e)}")
+        conn_voo.rollback()
+
 
 if __name__ == "__main__":
     csv_to_sqlite_voo()

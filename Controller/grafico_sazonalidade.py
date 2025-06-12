@@ -49,7 +49,7 @@ def plot_barras_sazonalidade(df_sazonal, metrica="passageiros_pagos"):
         hovermode='x unified',
         plot_bgcolor='rgba(0,0,0,0)',
         width=400,
-        height=400,
+        height=500,
     )
 
     st.plotly_chart(fig, use_container_width=True)

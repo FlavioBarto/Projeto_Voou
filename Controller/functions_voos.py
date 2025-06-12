@@ -14,7 +14,7 @@ def total_passageiros_pagos(conn_voo, data_inicio, data_fim):
 
 def taxa_media_ocupacao(conn_voo, data_inicio, data_fim):
     query = f"""
-    SELECT (v.rpk / v.ask) as taxa_ocupacao
+    SELECT ROUND((SUM(v.rpk) / SUM(v.ask) * 100), 2) as taxa_ocupacao
     FROM voo v
     JOIN tempo t ON t.tempo_id = v.tempo_id
     WHERE t.ano BETWEEN {data_inicio.year} AND {data_fim.year}

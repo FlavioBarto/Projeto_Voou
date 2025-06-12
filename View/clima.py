@@ -46,7 +46,7 @@ def grafico_precipitacao_mensal(pais=None, ano=None):
         'July', 'August', 'September', 'October', 'November', 'December'
     ]).fillna(0).reset_index()
 
-    fig, ax = plt.subplots(figsize=(12, 6))
+    fig, ax = plt.subplots(figsize=(8, 5.3))
     sns.barplot(data=precip_monthly, x='month', y='precip_mm', palette='Blues', ax=ax)
     ax.set_title(f"Precipitação Mensal (mm) - {pais} - {ano}")
     ax.set_xticklabels(ax.get_xticklabels(), rotation=45)
@@ -74,7 +74,7 @@ def grafico_umidade_pizza(pais=None, ano=None):
     humidity_avg = humidity_filtered.groupby('condition_text_clean')['humidity_percentage'].mean()
     humidity_avg = humidity_avg.reindex(condicoes_desejadas).dropna()
 
-    fig, ax = plt.subplots(figsize=(8, 8))
+    fig, ax = plt.subplots(figsize=(8, 6.1))
     ax.pie(humidity_avg, labels=humidity_avg.index, autopct='%1.1f%%', startangle=140,
            colors=plt.cm.viridis(range(len(humidity_avg))))
     ax.set_title(f"Distribuição da Umidade Média por Condição Climática - {pais} {ano}")
@@ -92,7 +92,7 @@ def grafico_vento_pressao(pais=None, ano=None):
     df_filtrado = df[(df['country'] == pais) & (df['year'] == ano)]
     df_filtrado['strong_gust'] = df_filtrado['gust_kph'] > 30
 
-    fig, ax = plt.subplots(figsize=(10, 6))
+    fig, ax = plt.subplots(figsize=(8, 6.3))
     sns.scatterplot(
         data=df_filtrado,
         x='wind_kph',

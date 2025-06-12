@@ -1,0 +1,17 @@
+.block-container {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+/* Opcional: reduz espaço entre elementos */
+.element-container {
+    margin-bottom: 0.5rem;
+}
+
+/* Remove espaçamento extra ao redor dos títulos */
+h1, h2, h3, h4 {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}

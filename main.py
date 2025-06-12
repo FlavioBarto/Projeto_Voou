@@ -218,7 +218,7 @@ def main():
                       value=f"{porcentagem_media_assentos_cheios:.2f}%",
                       help="Porcentagem de Assentos Ocupados por Voos")
         with cols[2]:
-            st.metric("Taxa Média Ocupação", f"{float(media_taxa_ocupacao)}%")
+            st.metric("Taxa Média Ocupação", f"{media_taxa_ocupacao:.2f}%")
         with cols[3]:
             st.write("KPI 4")
 

@@ -7,6 +7,10 @@ from Model.criar_bd_voos import csv_to_sqlite_voo
 from Controller.functions_voos import total_passageiros_pagos
 from Controller.kpi_media_assentos import exibir_kpi_media_assentos
 from Controller.functions_voos import taxa_media_ocupacao
+from Controller.kpi_ticket_medio_voo import exibir_ticket_medio_voo
+from Controller.functions_clima import detalhe_paises
+from Controller.functions_clima import mes_temp
+from Controller.functions_clima import detalhe_climatico
 from View.clima import grafico_precipitacao_mensal
 from View.clima import grafico_umidade_pizza
 from View.clima import grafico_vento_pressao
@@ -79,8 +83,6 @@ def main():
             st.session_state.menu_ativo = "Voos"
         
         # TODO: Inserir Filtros para cada Dashboard
-        st.header("⚙️ Filtros")
-
         ano_mes_max = cursor_voo.execute("""
             SELECT MAX(ano), 
                 (SELECT MAX(mes) FROM tempo WHERE ano = (SELECT MAX(ano) FROM tempo))
@@ -103,7 +105,7 @@ def main():
         cols = st.columns(2)
         if st.session_state.filtros_resetados:
             # TODO: Inserir Filtro para Dashboard de Clima
-            if st.session_state.menu_ativo == "Clima":
+            if st.session_state.menu_ativo == "Voos":
                 cols = st.columns(2)
                 with cols[0]:
                     st.write("Filtro 1 padrão")
@@ -117,21 +119,9 @@ def main():
                     st.write("Filtro 4 padrão")
                     
             st.session_state.filtros_resetados = False
-        else:
-            if st.session_state.menu_ativo == "Clima":
-                cols = st.columns(2)
-                with cols[0]:
-                    st.write("Filtro 1 para mexer")
-                with cols[1]:
-                    st.write("Filtro 2 para mexer")
-
-                cols = st.columns(2)
-                with cols[0]:
-                    st.write("Filtro 3 para mexer")
-                with cols[1]:
-                    st.write("Filtro 4 para mexer")
-        
+        else:        
             if st.session_state.menu_ativo == "Voos":
+                st.header("⚙️ Filtros")
                 data_inicio = datetime.datetime(year=ano_min_voo_int, month=mes_min_voo_int, day=1)
                 data_fim = datetime.datetime(year=ano_max_voo_int, month=mes_max_voo_int, day=1)
 
@@ -152,46 +142,46 @@ def main():
                 with cols[1]:
                     st.write("Filtro 4 para mexer")
         
-        reset_filtros = st.button(
-            "🔄 Resetar Filtros", type="secondary")
-        
-        if reset_filtros:
-            st.session_state.filtros_resetados = True
-            st.toast("Filtros resetados para valores padrão!", icon="✅")
-            st.rerun()
+                reset_filtros = st.button(
+                    "🔄 Resetar Filtros", type="secondary")
+                
+                if reset_filtros:
+                    st.session_state.filtros_resetados = True
+                    st.toast("Filtros resetados para valores padrão!", icon="✅")
+                    st.rerun()
     
     menu = st.session_state.menu_ativo
 
     if menu == "Clima":
         st.header("📈 Dashboard Clima - Principais Indicadores", divider="grey")
-
         # TODO: Implementar KPIs
-        cols = st.columns(4)
-        with cols[0]:
-            st.write("KPI 1")
-        with cols[1]:
-            st.write("KPI 2")
-        with cols[2]:
-            st.write("KPI 3")
-        with cols[3]:
-            st.write("KPI 4")
-
-        st.subheader("🌍 Filtro por País")
+        aba_graficos, aba_mapa_calor = st.tabs(["📊 Gráficos Climáticos", "🗺️ Mapa de Calor"])
         # Carregando os países disponíveis diretamente da base
-        paises = carregar_paises_disponiveis()
-        pais_selecionado = st.selectbox("Selecione o país", paises)
-        setar_pais(pais_selecionado)
+        with aba_graficos:
+            st.subheader("🌍 Filtro por País")
+            paises = carregar_paises_disponiveis()
+            pais_selecionado = st.selectbox("Selecione o país", paises, key="selectbox_pais")
+            setar_pais(pais_selecionado)
+            detalhe_paises(pais_selecionado)
 
-        cols = st.columns(3)
-        with cols[0]:
-            st.write("Precipitação")
-            grafico_precipitacao_mensal()
-        with cols[1]:
-            st.write("Umidade")
-            grafico_umidade_pizza()
-        with cols[2]:
-            st.write("Pressão")
-            grafico_vento_pressao()
+            cols = st.columns(3)
+            with cols[0].container(border = True):
+                st.write("Precipitação")
+                grafico_precipitacao_mensal()
+            with cols[1].container(border = True):
+                st.write("Umidade")
+                grafico_umidade_pizza()
+            with cols[2].container(border = True):
+                st.write("Pressão")
+                grafico_vento_pressao()
+
+        with aba_mapa_calor:
+            st.subheader("🌍 Filtro por País")
+            paises = carregar_paises_disponiveis()
+            pais_selecionado = st.selectbox("Selecione o país", paises)
+            setar_pais(pais_selecionado)
+            detalhe_climatico(pais_selecionado)
+            mes_temp()
         
     if menu == "Voos":
         st.header("✈️ Dashboard ANAC - Voos Brasileiros", divider="grey")
@@ -203,12 +193,12 @@ def main():
             passageiros_pagos = total_passageiros_pagos(conn_voo, data_inicio, data_fim)
             porcentagem_media_assentos_cheios = exibir_kpi_media_assentos(conn_voo, data_inicio, data_fim)
             media_taxa_ocupacao = taxa_media_ocupacao(conn_voo)
+            ticket_medio_voo = exibir_ticket_medio_voo(conn_voo, data_inicio, data_fim)
 
         except Exception as e:
             st.error(f"Erro ao calcular os KPIs: {str(e)}")
             passageiros_pagos = 0
 
-        # TODO: Implementar KPIs
         cols = st.columns(4)
         with cols[0]:
             total_passageiros_pagos_formatado = formatar_numero(passageiros_pagos)
@@ -220,7 +210,9 @@ def main():
         with cols[2]:
             st.metric("Taxa Média Ocupação", f"{media_taxa_ocupacao:.2f}%")
         with cols[3]:
-            st.write("KPI 4")
+            st.metric(label="Ticket Médio dos Voos",
+                      value=f"R$ {ticket_medio_voo}",
+                      help="Ticket Médio de Todos os Voos")
 
         cols = st.columns(3)
         with cols[0]:

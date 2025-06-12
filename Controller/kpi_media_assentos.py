@@ -1,5 +1,4 @@
 import pandas as pd
-import streamlit as st
 
 def exibir_kpi_media_assentos(conn_voo, data_inicio, data_fim):
     query_porcentagem = f"""SELECT 

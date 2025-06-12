@@ -192,7 +192,7 @@ def main():
         try:
             passageiros_pagos = total_passageiros_pagos(conn_voo, data_inicio, data_fim)
             porcentagem_media_assentos_cheios = exibir_kpi_media_assentos(conn_voo, data_inicio, data_fim)
-            media_taxa_ocupacao = taxa_media_ocupacao(conn_voo)
+            media_taxa_ocupacao = taxa_media_ocupacao(conn_voo, data_inicio, data_fim)
             ticket_medio_voo = exibir_ticket_medio_voo(conn_voo, data_inicio, data_fim)
 
         except Exception as e:

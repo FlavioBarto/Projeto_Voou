@@ -224,13 +224,14 @@ def main():
         except Exception as e:
             st.error(f"Erro ao calcular os gráficos: {str(e)}")
 
-        cols = st.columns(3)
-        with cols[0]:
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col1:
             st.pyplot(demanda_e_ocupacao)
-        with cols[1]:
-            plot_barras_sazonalidade(df_sazonal)
-        with cols[2]:
+        with col2:
             plot_pizza_paises_mais_visitados(df_paises)
+        with col3:
+            plot_barras_sazonalidade(df_sazonal)
+
 
 if __name__ == "__main__":
     main()

@@ -156,7 +156,7 @@ def main():
 
     if menu == "Clima":
         st.header("📈 Dashboard Clima - Principais Indicadores", divider="grey")
-        aba_graficos, aba_mapa_calor, aba_detalhe_clima = st.tabs(["🌍 Filtro por País", "🗺️ Mapa Mundi", "🌦️ Detalhe Clima"])
+        aba_graficos, aba_detalhe_clima, aba_mapa_calor = st.tabs(["🌍 Filtro por País", "🌦️ Detalhe Clima", "🗺️ Mapa Mundi"])
 
         with aba_graficos:
             paises = carregar_paises_disponiveis()

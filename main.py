@@ -7,6 +7,7 @@ from Model.criar_bd_voos import csv_to_sqlite_voo
 from Controller.functions_voos import total_passageiros_pagos
 from Controller.kpi_media_assentos import exibir_kpi_media_assentos
 from Controller.functions_voos import taxa_media_ocupacao
+from Controller.kpi_ticket_medio_voo import exibir_ticket_medio_voo
 from View.clima import grafico_precipitacao_mensal
 from View.clima import grafico_umidade_pizza
 from View.clima import grafico_vento_pressao
@@ -203,6 +204,7 @@ def main():
             passageiros_pagos = total_passageiros_pagos(conn_voo, data_inicio, data_fim)
             porcentagem_media_assentos_cheios = exibir_kpi_media_assentos(conn_voo, data_inicio, data_fim)
             media_taxa_ocupacao = taxa_media_ocupacao(conn_voo)
+            ticket_medio_voo = exibir_ticket_medio_voo(conn_voo, data_inicio, data_fim)
 
         except Exception as e:
             st.error(f"Erro ao calcular os KPIs: {str(e)}")
@@ -220,7 +222,9 @@ def main():
         with cols[2]:
             st.metric("Taxa Média Ocupação", f"{media_taxa_ocupacao:.2f}%")
         with cols[3]:
-            st.write("KPI 4")
+            st.metric(label="Ticket Médio dos Voos",
+                      value=f"R$ {ticket_medio_voo}",
+                      help="Ticket Médio de Todos os Voos")
 
         cols = st.columns(3)
         with cols[0]:

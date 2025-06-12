@@ -52,5 +52,4 @@ def evolucao_mensal_demanda_e_ocupacao(conn_voo, data_inicio, data_fim):
         )
     )
     
-
     return df, fig

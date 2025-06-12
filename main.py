@@ -192,13 +192,10 @@ def main():
             st.plotly_chart(fig_demanda)
         with col1[1]:
             plot_barras_sazonalidade(df_sazonal)
-        
-        col2 = st.columns(2)
+            
+        col2 = st.columns(1)
         with col2[0]:
             plot_pizza_paises_mais_visitados(df_paises)
-        with col2[1]:
-            plot_barras_sazonalidade(df_sazonal)
-
 
 if __name__ == "__main__":
     main()

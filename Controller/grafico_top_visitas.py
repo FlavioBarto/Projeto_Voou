@@ -40,7 +40,7 @@ def plot_pizza_paises_mais_visitados(df_paises, top_n=10):
     fig.update_traces(
         textposition='outside',
         textinfo='percent+label',
-        textfont_size=14,
+        textfont_size=16,
         marker=dict(line=dict(color='white', width=1)),
         hovertemplate="<b>%{label}</b><br>%{percent:.1%}<br>%{value:,.0f} passageiros",
         showlegend=False  # Isso remove a legenda
@@ -51,7 +51,8 @@ def plot_pizza_paises_mais_visitados(df_paises, top_n=10):
         title_x=0.5,
         height=500,
         uniformtext_minsize=12,
-        uniformtext_mode='hide'
+        uniformtext_mode='hide',
+        title_font=dict(size=24)
     )
     
     st.plotly_chart(fig, use_container_width=True)

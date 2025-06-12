@@ -136,25 +136,4 @@ def mes_temp():
 
     st.plotly_chart(fig, key="mapa_exibicao")
     
-def grafico_mapa_calor_poluentes(pais: str):
-    # Consulta dados do backend
-    df = consultar_dados_poluentes_pais(pais)
 
-    if df.empty:
-        st.warning("Nenhum dado de poluentes encontrado para o país selecionado.")
-        return
-
-    # Cria um mapa de calor com Plotly
-    fig = px.density_mapbox(
-        df,
-        lat="latitude",
-        lon="longitude",
-        z="indice_poluente",
-        radius=15,
-        center=dict(lat=df.latitude.mean(), lon=df.longitude.mean()),
-        zoom=3,
-        mapbox_style="carto-positron",
-        title=f"Mapa de Calor de Poluentes - {pais}"
-    )
-
-    st.plotly_chart(fig, use_container_width=True)

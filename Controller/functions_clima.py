@@ -68,27 +68,7 @@ def detalhe_paises(pais):
         st.metric("Última atualização", ultima_temp['last_updated'].strftime('%Y-%m-%d %H:%M'))
 
 
-def detalhe_climatico(pais):
-    df = consultar_dados_poluentes_pais()
-    df_pais = df[df['country'].str.upper() == pais.upper()]
 
-    if df_pais.empty:
-        st.warning(f"Nenhum dado encontrado para o país: {pais}")
-        return
-
-    ultima_temp = df_pais.sort_values('last_updated', ascending=False).iloc[0]
-
-    st.subheader("🧪 Níveis de Poluentes (Última Medição)")
-    cols_pol = st.columns(4)
-
-    with cols_pol[0].container(border=True):
-        st.metric("Monóxido de Carbono (CO)", f"{ultima_temp['carbon_monoxide']:.2f}")
-    with cols_pol[1].container(border=True):
-        st.metric("Ozônio (O₃)", f"{ultima_temp['ozone']:.2f}")
-    with cols_pol[2].container(border=True):
-        st.metric("Dióxido de Nitrogênio (NO₂)", f"{ultima_temp['nitrogen_dioxide']:.2f}")
-    with cols_pol[3].container(border=True):
-        st.metric("Dióxido de Enxofre (SO₂)", f"{ultima_temp['sulphur_dioxide']:.2f}")
 
 
 

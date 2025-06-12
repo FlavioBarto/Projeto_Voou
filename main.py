@@ -11,7 +11,7 @@ from Controller.kpi_ticket_medio_voo import exibir_ticket_medio_voo
 from Controller.functions_clima import detalhe_paises
 from View.clima import grafico_poluentes_mensal_com_selectbox
 from Controller.functions_clima import mes_temp
-from Controller.functions_clima import detalhe_climatico
+
 from Controller.grafico_sazonalidade import exibir_dados_volume_passageiros_rota
 from Controller.grafico_sazonalidade import plot_barras_sazonalidade
 from Controller.grafico_top_visitas import exibir_dados_total_viagens
@@ -145,10 +145,7 @@ def main():
             mes_temp()
 
         with aba_detalhe_clima:
-            paises = carregar_paises_disponiveis()
-            pais_selecionado = st.selectbox("Selecione o país", paises, key="selectbox_pais_detalhe")
-            setar_pais(pais_selecionado)
-            detalhe_climatico(pais_selecionado)
+            
             grafico_poluentes_mensal_com_selectbox()
 
 

@@ -7,7 +7,7 @@ import sqlite3
 def carregar_dados_climaticos():
     conn = sqlite3.connect('weather_database.db')
     query = """
-        SELECT wd.*, l.country, wc.condition_text
+        SELECT wd.last_updated, wd.temperature_celsius, l.country, wc.condition_text
         FROM weather_data wd
         JOIN location l ON wd.location_id = l.location_id
         JOIN weather_condition wc ON wd.condition_id = wc.condition_id
@@ -35,12 +35,12 @@ def consultar_dados_poluentes_pais():
     '''
     conn = sqlite3.connect("weather_database.db")
     df = pd.read_sql_query(query, conn)
-    conn.close()
+
+    df['last_updated'] = pd.to_datetime(df['last_updated'], errors='coerce')
+    df['year'] = df['last_updated'].dt.year
+    df['month'] = df['last_updated'].dt.month_name()
+
     return df
-
-
-
-
 
 def carregar_paises_disponiveis():
     df = carregar_dados_climaticos()
@@ -68,31 +68,7 @@ def detalhe_paises(pais):
         st.metric("Última atualização", ultima_temp['last_updated'].strftime('%Y-%m-%d %H:%M'))
 
 
-def detalhe_climatico(pais):
-    # Busca todos os dados sem filtrar na SQL
-    df = consultar_dados_poluentes_pais()
 
-    # Filtra os dados pelo país passado como parâmetro
-    df_pais = df[df['country'].str.upper() == pais.upper()]
-
-    if df_pais.empty:
-        st.warning(f"Nenhum dado encontrado para o país: {pais}")
-        return
-
-    # Ordena e seleciona o registro mais recente do país
-    ultima_temp = df_pais.sort_values('last_updated', ascending=False).iloc[0]
-
-    st.subheader("🧪 Níveis de Poluentes (Última Medição)")
-    cols_pol = st.columns(4)
-
-    with cols_pol[0].container(border=True):
-        st.metric("Monóxido de Carbono (CO)", f"{ultima_temp['carbon_monoxide']:.2f}")
-    with cols_pol[1].container(border=True):
-        st.metric("Ozônio (O₃)", f"{ultima_temp['ozone']:.2f}")
-    with cols_pol[2].container(border=True):
-        st.metric("Dióxido de Nitrogênio (NO₂)", f"{ultima_temp['nitrogen_dioxide']:.2f}")
-    with cols_pol[3].container(border=True):
-        st.metric("Dióxido de Enxofre (SO₂)", f"{ultima_temp['sulphur_dioxide']:.2f}")
 
 
 
@@ -132,7 +108,7 @@ def mes_temp():
     )
 
     fig.update_layout(width=1200, height=600)
-    
+
     st.plotly_chart(fig, key="mapa_exibicao")
     
 

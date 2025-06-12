@@ -9,8 +9,9 @@ from Controller.kpi_media_assentos import exibir_kpi_media_assentos
 from Controller.functions_voos import taxa_media_ocupacao
 from Controller.kpi_ticket_medio_voo import exibir_ticket_medio_voo
 from Controller.functions_clima import detalhe_paises
+from View.clima import grafico_poluentes_mensal_com_selectbox
 from Controller.functions_clima import mes_temp
-from Controller.functions_clima import detalhe_climatico
+
 from Controller.grafico_sazonalidade import exibir_dados_volume_passageiros_rota
 from Controller.grafico_sazonalidade import plot_barras_sazonalidade
 from Controller.grafico_top_visitas import exibir_dados_total_viagens
@@ -77,84 +78,49 @@ def main():
     init_db()
 
     with st.sidebar:
-        st.title("📊 Análises")
+        st.header("📊 Análises", divider="grey")
 
         if "menu_ativo" not in st.session_state:
             st.session_state.menu_ativo = "Clima"
         
-        if st.sidebar.button("☀️ Dashboard Clima", type="secondary"):
+        if st.sidebar.button("☀️ Dashboard Clima", type="tertiary"):
             st.session_state.menu_ativo = "Clima"
-        if st.sidebar.button("✈️ Dashboard Voos", type="secondary"):
+        if st.sidebar.button("✈️ Dashboard Voos", type="tertiary"):
             st.session_state.menu_ativo = "Voos"
-        
-        # TODO: Inserir Filtros para cada Dashboard
-        ano_mes_max = cursor_voo.execute("""
-            SELECT MAX(ano), 
-                (SELECT MAX(mes) FROM tempo WHERE ano = (SELECT MAX(ano) FROM tempo))
-            FROM tempo
-        """).fetchone()
+       
+        if st.session_state.menu_ativo == "Voos":
+            st.header("⚙️ Filtros", divider="grey")
 
-        ano_max_voo_int, mes_max_voo_int = ano_mes_max
+            ano_mes_max = cursor_voo.execute("""
+                SELECT MAX(ano), 
+                    (SELECT MAX(mes) FROM tempo WHERE ano = (SELECT MAX(ano) FROM tempo))
+                FROM tempo
+            """).fetchone()
 
-        ano_mes_min = cursor_voo.execute("""
-            SELECT MIN(ano), 
-                (SELECT MIN(mes) FROM tempo WHERE ano = (SELECT MIN(ano) FROM tempo))
-            FROM tempo
-        """).fetchone()
+            ano_max_voo_int, mes_max_voo_int = ano_mes_max
 
-        ano_min_voo_int, mes_min_voo_int = ano_mes_min
+            ano_mes_min = cursor_voo.execute("""
+                SELECT MIN(ano), 
+                    (SELECT MIN(mes) FROM tempo WHERE ano = (SELECT MIN(ano) FROM tempo))
+                FROM tempo
+            """).fetchone()
 
-        if 'filtros_resetados' not in st.session_state:
-            st.session_state.filtros_resetados = False
+            ano_min_voo_int, mes_min_voo_int = ano_mes_min
 
-        cols = st.columns(2)
-        if st.session_state.filtros_resetados:
-            # TODO: Inserir Filtro para Dashboard de Clima
-            if st.session_state.menu_ativo == "Voos":
-                cols = st.columns(2)
-                with cols[0]:
-                    st.write("Filtro 1 padrão")
-                with cols[1]:
-                    st.write("Filtro 2 padrão")
+            data_inicio = datetime.datetime(year=ano_min_voo_int, month=mes_min_voo_int, day=1)
+            data_fim = datetime.datetime(year=ano_max_voo_int, month=mes_max_voo_int, day=1)
 
-                cols = st.columns(2)
-                with cols[0]:
-                    st.write("Filtro 3 padrão")
-                with cols[1]:
-                    st.write("Filtro 4 padrão")
-                    
-            st.session_state.filtros_resetados = False
-        else:        
-            if st.session_state.menu_ativo == "Voos":
-                st.header("⚙️ Filtros")
-                data_inicio = datetime.datetime(year=ano_min_voo_int, month=mes_min_voo_int, day=1)
-                data_fim = datetime.datetime(year=ano_max_voo_int, month=mes_max_voo_int, day=1)
+            if "data_inicio" not in st.session_state:
+                st.session_state.data_inicio = data_inicio
 
-                if "data_inicio" not in st.session_state:
-                    st.session_state.data_inicio = data_inicio
+            if "data_fim" not in st.session_state:
+                st.session_state.data_fim = data_fim
 
-                if "data_fim" not in st.session_state:
-                    st.session_state.data_fim = data_fim
+            periodo_selecionado = st.date_input("Selecione o período desejado:", [data_inicio, data_fim], min_value=data_inicio, max_value=data_fim)
 
-                periodo_selecionado = st.date_input("Selecione o período desejado:", [data_inicio, data_fim], min_value=data_inicio, max_value=data_fim)
+            if len(periodo_selecionado) == 2:
+                st.session_state.data_inicio, st.session_state.data_fim = periodo_selecionado
 
-                if len(periodo_selecionado) == 2:
-                    st.session_state.data_inicio, st.session_state.data_fim = periodo_selecionado
-
-                cols = st.columns(2)
-                with cols[0]:
-                    st.write("Filtro 3 para mexer")
-                with cols[1]:
-                    st.write("Filtro 4 para mexer")
-        
-                reset_filtros = st.button(
-                    "🔄 Resetar Filtros", type="secondary")
-                
-                if reset_filtros:
-                    st.session_state.filtros_resetados = True
-                    st.toast("Filtros resetados para valores padrão!", icon="✅")
-                    st.rerun()
-    
     menu = st.session_state.menu_ativo
 
     if menu == "Clima":
@@ -179,10 +145,8 @@ def main():
             mes_temp()
 
         with aba_detalhe_clima:
-            paises = carregar_paises_disponiveis()
-            pais_selecionado = st.selectbox("Selecione o país", paises, key="selectbox_pais_detalhe")
-            setar_pais(pais_selecionado)
-            detalhe_climatico(pais_selecionado)
+            
+            grafico_poluentes_mensal_com_selectbox()
 
 
     if menu == "Voos":
@@ -230,6 +194,9 @@ def main():
             plot_barras_sazonalidade(df_sazonal)
         with cols[2]:
             plot_pizza_paises_mais_visitados(df_paises)
+        with col3:
+            plot_barras_sazonalidade(df_sazonal)
+
 
 if __name__ == "__main__":
     main()

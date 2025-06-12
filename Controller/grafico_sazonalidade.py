@@ -44,10 +44,12 @@ def plot_barras_sazonalidade(df_sazonal, metrica="passageiros_pagos"):
     )
     
     fig.update_layout(
-        title=f'Quantidade de {names.get(metrica)} por Mês',
+        title=f'{names.get(metrica)} por Mês',
         xaxis={'type': 'category'},
         hovermode='x unified',
-        plot_bgcolor='rgba(0,0,0,0)'
+        plot_bgcolor='rgba(0,0,0,0)',
+        width=400,
+        height=500,
     )
 
     st.plotly_chart(fig, use_container_width=True)

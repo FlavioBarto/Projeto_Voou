@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import sqlite3
 import streamlit as st
+import io
+from Controller.functions_clima import consultar_dados_poluentes_pais
 
 # Nova Paleta Moderna
 PALETA_CORES = {
@@ -96,7 +98,7 @@ def grafico_umidade_pizza(pais=None, ano=None):
         PALETA_CORES['preto_esverdeado']
     ] * 2)[:len(humidity_avg)]
 
-    fig, ax = plt.subplots(figsize=(8, 6.005))
+    fig, ax = plt.subplots(figsize=(8, 6.3))
 
     def func_autopct(pct):
         return f"{pct:.1f}%"
@@ -151,3 +153,132 @@ def grafico_vento_pressao(pais=None, ano=None):
     ax.set_facecolor(PALETA_CORES['fundo'])
     fig.patch.set_facecolor(PALETA_CORES['fundo'])
     st.pyplot(fig)
+
+def grafico_poluentes_mensal_com_selectbox():
+    global pais_global
+    df = consultar_dados_poluentes_pais()
+    paises = sorted(df['country'].unique())
+    anos = sorted(df['year'].unique(), reverse=True)
+    pais_selecionado = st.selectbox("Selecione o país", paises)
+    setar_pais(pais_selecionado)
+    df_pais = df[df['country'].str.upper() == pais_selecionado.upper()]
+
+    if df.empty:
+        st.warning("Nenhum dado disponível.")
+        return
+
+    # Obter lista única de países e anos
+    ultima_temp = df_pais.sort_values('last_updated', ascending=False).iloc[0]
+
+    st.subheader("🧪 Níveis de Poluentes (Última Medição)")
+    cols_pol = st.columns(4)
+
+    with cols_pol[0].container(border=True):
+        st.metric("Monóxido de Carbono (CO)", f"{ultima_temp['carbon_monoxide']:.2f}")
+    with cols_pol[1].container(border=True):
+        st.metric("Ozônio (O₃)", f"{ultima_temp['ozone']:.2f}")
+    with cols_pol[2].container(border=True):
+        st.metric("Dióxido de Nitrogênio (NO₂)", f"{ultima_temp['nitrogen_dioxide']:.2f}")
+    with cols_pol[3].container(border=True):
+        st.metric("Dióxido de Enxofre (SO₂)", f"{ultima_temp['sulphur_dioxide']:.2f}")
+    # Selectbox para ano
+    ano = st.selectbox("Selecione o ano:", anos, index=0)
+
+    # Filtrar dados de acordo com seleção
+    df_filtrado = df[(df['country'] == pais_selecionado) & (df['year'] == ano)]
+
+    # Lista dos poluentes
+    poluentes = ['carbon_monoxide', 'ozone', 'nitrogen_dioxide', 'sulphur_dioxide']
+
+    # Média por mês
+    df_mensal = df_filtrado.groupby('month')[poluentes].mean()
+
+    # Ordenar os meses corretamente
+    meses_ordenados = ['January', 'February', 'March', 'April', 'May', 'June',
+                       'July', 'August', 'September', 'October', 'November', 'December']
+    df_mensal = df_mensal.reindex(meses_ordenados)
+
+    # Informações dos poluentes
+    poluentes_info = [
+        ('carbon_monoxide', 'Monóxido de Carbono (CO)', PALETA_CORES['verde_agua_claro']),
+        ('ozone', 'Ozônio (O₃)', PALETA_CORES['verde_agua_medio']),
+        ('nitrogen_dioxide', 'Dióxido de Nitrogênio (NO₂)', PALETA_CORES['verde_escuro']),
+        ('sulphur_dioxide', 'Dióxido de Enxofre (SO₂)', PALETA_CORES['azul_petróleo'])
+    ]
+
+    # Criar colunas 2 a 2
+    cols1 = st.columns(2)
+    cols2 = st.columns(2)
+
+    # === Gráfico 1 ===
+    with cols1[0]:
+        fig, ax = plt.subplots(figsize=(8, 3.5))
+        ax.plot(df_mensal.index, df_mensal['carbon_monoxide'], marker='o', color=PALETA_CORES['verde_agua_claro'], label='Monóxido de Carbono (CO)')
+        ax.set_title(f'Monóxido de Carbono (CO) - {pais_selecionado} - {ano}', color=PALETA_CORES['azul_petróleo'])
+        ax.set_xlabel('Mês', color=PALETA_CORES['preto_esverdeado'])
+        ax.set_ylabel('Concentração Média', color=PALETA_CORES['preto_esverdeado'])
+        ax.tick_params(axis='x', rotation=45, colors=PALETA_CORES['preto_esverdeado'])
+        ax.tick_params(axis='y', colors=PALETA_CORES['preto_esverdeado'])
+        ax.grid(True, linestyle='--', alpha=0.5)
+        ax.legend()
+        fig.patch.set_facecolor(PALETA_CORES['fundo'])
+        ax.set_facecolor(PALETA_CORES['fundo'])
+        buf = io.BytesIO()
+        fig.savefig(buf, format='png', bbox_inches='tight')
+        buf.seek(0)
+        st.image(buf)
+
+    # === Gráfico 2 ===
+    with cols1[1]:
+        fig, ax = plt.subplots(figsize=(8, 3.5))
+        ax.plot(df_mensal.index, df_mensal['ozone'], marker='o', color=PALETA_CORES['verde_agua_medio'], label='Ozônio (O₃)')
+        ax.set_title(f'Ozônio (O₃) - {pais_selecionado} - {ano}', color=PALETA_CORES['azul_petróleo'])
+        ax.set_xlabel('Mês', color=PALETA_CORES['preto_esverdeado'])
+        ax.set_ylabel('Concentração Média', color=PALETA_CORES['preto_esverdeado'])
+        ax.tick_params(axis='x', rotation=45, colors=PALETA_CORES['preto_esverdeado'])
+        ax.tick_params(axis='y', colors=PALETA_CORES['preto_esverdeado'])
+        ax.grid(True, linestyle='--', alpha=0.5)
+        ax.legend()
+        fig.patch.set_facecolor(PALETA_CORES['fundo'])
+        ax.set_facecolor(PALETA_CORES['fundo'])
+        buf = io.BytesIO()
+        fig.savefig(buf, format='png', bbox_inches='tight')
+        buf.seek(0)
+        st.image(buf)
+
+    # === Gráfico 3 ===
+    with cols2[0]:
+        fig, ax = plt.subplots(figsize=(8, 3.5))
+        ax.plot(df_mensal.index, df_mensal['nitrogen_dioxide'], marker='o', color=PALETA_CORES['verde_escuro'], label='Dióxido de Nitrogênio (NO₂)')
+        ax.set_title(f'Dióxido de Nitrogênio (NO₂) - {pais_selecionado} - {ano}', color=PALETA_CORES['azul_petróleo'])
+        ax.set_xlabel('Mês', color=PALETA_CORES['preto_esverdeado'])
+        ax.set_ylabel('Concentração Média', color=PALETA_CORES['preto_esverdeado'])
+        ax.tick_params(axis='x', rotation=45, colors=PALETA_CORES['preto_esverdeado'])
+        ax.tick_params(axis='y', colors=PALETA_CORES['preto_esverdeado'])
+        ax.grid(True, linestyle='--', alpha=0.5)
+        ax.legend()
+        fig.patch.set_facecolor(PALETA_CORES['fundo'])
+        ax.set_facecolor(PALETA_CORES['fundo'])
+        buf = io.BytesIO()
+        fig.savefig(buf, format='png', bbox_inches='tight')
+        buf.seek(0)
+        st.image(buf)
+
+    # === Gráfico 4 ===
+    with cols2[1]:
+        fig, ax = plt.subplots(figsize=(8, 3.5))
+        ax.plot(df_mensal.index, df_mensal['sulphur_dioxide'], marker='o', color=PALETA_CORES['azul_petróleo'], label='Dióxido de Enxofre (SO₂)')
+        ax.set_title(f'Dióxido de Enxofre (SO₂) - {pais_selecionado} - {ano}', color=PALETA_CORES['azul_petróleo'])
+        ax.set_xlabel('Mês', color=PALETA_CORES['preto_esverdeado'])
+        ax.set_ylabel('Concentração Média', color=PALETA_CORES['preto_esverdeado'])
+        ax.tick_params(axis='x', rotation=45, colors=PALETA_CORES['preto_esverdeado'])
+        ax.tick_params(axis='y', colors=PALETA_CORES['preto_esverdeado'])
+        ax.grid(True, linestyle='--', alpha=0.5)
+        ax.legend()
+        fig.patch.set_facecolor(PALETA_CORES['fundo'])
+        ax.set_facecolor(PALETA_CORES['fundo'])
+        buf = io.BytesIO()
+        fig.savefig(buf, format='png', bbox_inches='tight')
+        buf.seek(0)
+        st.image(buf)
+

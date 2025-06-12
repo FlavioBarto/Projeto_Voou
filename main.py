@@ -196,7 +196,6 @@ def main():
             porcentagem_media_assentos_cheios = exibir_kpi_media_assentos(conn_voo, data_inicio, data_fim)
             media_taxa_ocupacao = taxa_media_ocupacao(conn_voo, data_inicio, data_fim)
             ticket_medio_voo = exibir_ticket_medio_voo(conn_voo, data_inicio, data_fim)
-            demanda_e_ocupacao = evolucao_mensal_demanda_e_ocupacao(conn_voo, data_inicio, data_fim)
 
         except Exception as e:
             st.error(f"Erro ao calcular os KPIs: {str(e)}")
@@ -220,13 +219,13 @@ def main():
         try:
             df_sazonal = exibir_dados_volume_passageiros_rota(conn_voo, data_inicio, data_fim)
             df_paises = exibir_dados_total_viagens(conn_voo, data_inicio, data_fim)
-            demanda_e_ocupacao = evolucao_mensal_demanda_e_ocupacao(conn_voo, data_inicio, data_fim)
+            fig_demanda = evolucao_mensal_demanda_e_ocupacao(conn_voo, data_inicio, data_fim)
         except Exception as e:
             st.error(f"Erro ao calcular os gráficos: {str(e)}")
 
         cols = st.columns(3)
         with cols[0]:
-            st.pyplot(demanda_e_ocupacao)
+            st.plotly_chart(fig_demanda, use_container_width=True)
         with cols[1]:
             plot_barras_sazonalidade(df_sazonal)
         with cols[2]:

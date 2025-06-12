@@ -1,38 +1,33 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
+import plotly.express as px
 
 def evolucao_mensal_demanda_e_ocupacao(conn_voo, data_inicio, data_fim):
     query = f"""
-    SELECT SUM(v.rpk) AS total_rpk,
-    ROUND((SUM(v.rpk) / NULLIF(SUM(v.ask), 0) * 100), 2) AS taxa_ocupacao,
-    t.ano, t.mes
-    FROM voo v
-    JOIN tempo t
-    WHERE t.ano BETWEEN {data_inicio.year} AND {data_fim.year}
-    AND t.mes BETWEEN {data_inicio.month} AND {data_fim.month} 
-    GROUP BY t.ano, t.mes
-    ORDER BY t.ano, t.mes
+    SELECT 
+        t.ano || '-' || printf('%02d', t.mes) AS mes,
+        SUM(v.rpk) AS total_rpk
+    FROM voos v
+    JOIN tempo t ON v.tempo_id = t.tempo_id
+    WHERE 
+        (t.ano > ? OR (t.ano = ? AND t.mes >= ?))
+        AND
+        (t.ano < ? OR (t.ano = ? AND t.mes <= ?))
+    GROUP BY mes
+    ORDER BY mes
     """
 
-    df_evolucao_mensal_demanda_e_ocupacao = pd.read_sql_query(query, conn_voo)
+    params = (
+        data_inicio.year, data_inicio.year, data_inicio.month,
+        data_fim.year, data_fim.year, data_fim.month
+    )
 
-    df_evolucao_mensal_demanda_e_ocupacao['data'] = pd.to_datetime(df_evolucao_mensal_demanda_e_ocupacao['ano'].astype(str) + '-' + df_evolucao_mensal_demanda_e_ocupacao['mes'].astype(str) + '-01')
-    
-    fig, ax1 = plt.subplots(figsize=(10,8))
+    df = pd.read_sql_query(query, conn_voo, params=params)
 
-    sns.lineplot(data=df_evolucao_mensal_demanda_e_ocupacao, x='data', y='total_rpk', label='Demanda (RPK)', ax=ax1, color='blue')
-    ax1.set_ylabel("RPK Total", color="blue")
-    ax1.tick_params(axis='y', labelcolor='blue')
-    
-    ax2 = ax1.twinx()
-    sns.lineplot(data=df_evolucao_mensal_demanda_e_ocupacao, x='data', y='taxa_ocupacao', label='Taxa de Ocupação (%)', ax=ax2, color='green')
-    ax2.set_ylabel("Taxa de Ocupação (%)", color="green")
-    ax2.tick_params(axis='y', labelcolor='green')
+    df["total_rpk_bilhoes"] = df["total_rpk"] / 1e9
 
-    plt.title("Evolução Mensal da Demanda (RPK) e Taxa de Ocupação", fontsize=25)
-    ax1.set_xlabel('Mês')
-    plt.tight_layout()
+    fig = px.line(df, x="mes", y="total_rpk_bilhoes",
+                  title="Evolução Mensal da Demanda (RPK)",
+                  labels={"mes": "Mês", "total_rpk_bilhoes": "Demanda (em bilhões de RPK)"})
 
-    return fig
+    return df, fig

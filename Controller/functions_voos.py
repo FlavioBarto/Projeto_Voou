@@ -14,13 +14,19 @@ def total_passageiros_pagos(conn_voo, data_inicio, data_fim):
 
 def taxa_media_ocupacao(conn_voo):
     query = """
-    SELECT (v.assentos * v.distancia_voada_km) / (v.passageiros_pagos * v.distancia_voada_km) as taxa_ocupacao
+    SELECT (v.rpk / v.ask) as taxa_ocupacao
     FROM voo v
-    WHERE v.assentos IS NOT NULL
-    AND v.distancia_voada_km IS NOT NULL
-    AND v.passageiros_pagos IS NOT NULL
-    AND v.passageiros_pagos > 0
+    WHERE v.rpk IS NOT NULL
+    AND v.rpk > 0
+    AND v.ask IS NOT NULL
+    AND v.ask > 0
     """
 
     df_taxa_media_ocupacao = pd.read_sql_query(query, conn_voo).iloc[0, 0]
     return df_taxa_media_ocupacao
+
+def evolucao_mensal_demanda_e_ocupacao(conn_voo):
+    query = """
+    SELECT SU
+    """
+    print()

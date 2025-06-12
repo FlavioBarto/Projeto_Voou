@@ -11,6 +11,10 @@ from Controller.kpi_ticket_medio_voo import exibir_ticket_medio_voo
 from Controller.functions_clima import detalhe_paises
 from Controller.functions_clima import mes_temp
 from Controller.functions_clima import detalhe_climatico
+from Controller.grafico_sazonalidade import exibir_dados_volume_passageiros_rota
+from Controller.grafico_sazonalidade import plot_barras_sazonalidade
+from Controller.grafico_top_visitas import exibir_dados_total_viagens
+from Controller.grafico_top_visitas import plot_pizza_paises_mais_visitados
 from View.voos import evolucao_mensal_demanda_e_ocupacao
 from View.clima import grafico_precipitacao_mensal
 from View.clima import grafico_umidade_pizza
@@ -214,7 +218,8 @@ def main():
                       help="Ticket Médio de Todos os Voos")
 
         try:
-            # df_sazonal = exibir_dados_volume_passageiros_rota(conn_voo, data_inicio, data_fim)
+            df_sazonal = exibir_dados_volume_passageiros_rota(conn_voo, data_inicio, data_fim)
+            df_paises = exibir_dados_total_viagens(conn_voo, data_inicio, data_fim)
             demanda_e_ocupacao = evolucao_mensal_demanda_e_ocupacao(conn_voo, data_inicio, data_fim)
         except Exception as e:
             st.error(f"Erro ao calcular os gráficos: {str(e)}")
@@ -223,10 +228,9 @@ def main():
         with cols[0]:
             st.pyplot(demanda_e_ocupacao)
         with cols[1]:
-            print()
-            # plot_barras_sazonalidade(df_sazonal)
+            plot_barras_sazonalidade(df_sazonal)
         with cols[2]:
-            st.write("Gráfico 3")
+            plot_pizza_paises_mais_visitados(df_paises)
 
 if __name__ == "__main__":
     main()

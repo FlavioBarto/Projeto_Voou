@@ -13,6 +13,8 @@ from Controller.functions_clima import mes_temp
 from Controller.functions_clima import detalhe_climatico
 from Controller.grafico_sazonalidade import exibir_dados_volume_passageiros_rota
 from Controller.grafico_sazonalidade import plot_barras_sazonalidade
+from Controller.grafico_top_visitas import exibir_dados_total_viagens
+from Controller.grafico_top_visitas import plot_pizza_paises_mais_visitados
 from View.clima import grafico_precipitacao_mensal
 from View.clima import grafico_umidade_pizza
 from View.clima import grafico_vento_pressao
@@ -215,6 +217,7 @@ def main():
 
         try:
             df_sazonal = exibir_dados_volume_passageiros_rota(conn_voo, data_inicio, data_fim)
+            df_paises = exibir_dados_total_viagens(conn_voo, data_inicio, data_fim)
         except Exception as e:
             st.error(f"Erro ao calcular os gráficos: {str(e)}")
 
@@ -224,7 +227,7 @@ def main():
         with cols[1]:
             plot_barras_sazonalidade(df_sazonal)
         with cols[2]:
-            st.write("Gráfico 3")
+            plot_pizza_paises_mais_visitados(df_paises)
 
 if __name__ == "__main__":
     main()

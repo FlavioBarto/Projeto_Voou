@@ -156,35 +156,33 @@ def main():
 
     if menu == "Clima":
         st.header("📈 Dashboard Clima - Principais Indicadores", divider="grey")
-        # TODO: Implementar KPIs
-        aba_graficos, aba_mapa_calor = st.tabs(["📊 Gráficos Climáticos", "🗺️ Mapa de Calor"])
-        # Carregando os países disponíveis diretamente da base
+        aba_graficos, aba_mapa_calor, aba_detalhe_clima = st.tabs(["🌍 Filtro por País", "🗺️ Mapa Mundi", "🌦️ Detalhe Clima"])
+
         with aba_graficos:
             st.subheader("🌍 Filtro por País")
             paises = carregar_paises_disponiveis()
-            pais_selecionado = st.selectbox("Selecione o país", paises, key="selectbox_pais")
+            pais_selecionado = st.selectbox("Selecione o país", paises, key="selectbox_pais_graficos")
             setar_pais(pais_selecionado)
             detalhe_paises(pais_selecionado)
 
             cols = st.columns(3)
-            with cols[0].container(border = True):
-                st.write("Precipitação")
+            with cols[0].container(border=True):
                 grafico_precipitacao_mensal()
-            with cols[1].container(border = True):
-                st.write("Umidade")
+            with cols[1].container(border=True):
                 grafico_umidade_pizza()
-            with cols[2].container(border = True):
-                st.write("Pressão")
+            with cols[2].container(border=True):
                 grafico_vento_pressao()
 
         with aba_mapa_calor:
-            st.subheader("🌍 Filtro por País")
+            mes_temp()
+
+        with aba_detalhe_clima:
             paises = carregar_paises_disponiveis()
-            pais_selecionado = st.selectbox("Selecione o país", paises)
+            pais_selecionado = st.selectbox("Selecione o país", paises, key="selectbox_pais_detalhe")
             setar_pais(pais_selecionado)
             detalhe_climatico(pais_selecionado)
-            mes_temp()
-        
+
+
     if menu == "Voos":
         st.header("✈️ Dashboard ANAC - Voos Brasileiros", divider="grey")
         

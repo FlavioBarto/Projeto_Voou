@@ -157,7 +157,6 @@ def main():
         aba_graficos, aba_mapa_calor, aba_detalhe_clima = st.tabs(["🌍 Filtro por País", "🗺️ Mapa Mundi", "🌦️ Detalhe Clima"])
 
         with aba_graficos:
-            st.subheader("🌍 Filtro por País")
             paises = carregar_paises_disponiveis()
             pais_selecionado = st.selectbox("Selecione o país", paises, key="selectbox_pais_graficos")
             setar_pais(pais_selecionado)

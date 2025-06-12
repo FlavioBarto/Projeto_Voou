@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import sqlite3
 import streamlit as st
+import io
+from Controller.functions_clima import consultar_dados_poluentes_pais
 
 # Nova Paleta Moderna
 PALETA_CORES = {
@@ -96,7 +98,7 @@ def grafico_umidade_pizza(pais=None, ano=None):
         PALETA_CORES['preto_esverdeado']
     ] * 2)[:len(humidity_avg)]
 
-    fig, ax = plt.subplots(figsize=(8, 6.005))
+    fig, ax = plt.subplots(figsize=(8, 6.3))
 
     def func_autopct(pct):
         return f"{pct:.1f}%"
@@ -151,3 +153,68 @@ def grafico_vento_pressao(pais=None, ano=None):
     ax.set_facecolor(PALETA_CORES['fundo'])
     fig.patch.set_facecolor(PALETA_CORES['fundo'])
     st.pyplot(fig)
+
+def grafico_poluentes_mensal_com_selectbox():
+    global pais_global
+    df = consultar_dados_poluentes_pais()
+   
+    if df.empty:
+        st.warning("Nenhum dado disponível.")
+        return
+
+    # Obter lista única de países e anos
+    paises = sorted(df['country'].unique())
+    anos = sorted(df['year'].unique(), reverse=True)
+
+    # Selectbox para país
+    pais = st.selectbox("Selecione o país:", paises, index=paises.index(pais_global) if pais_global in paises else 0)
+
+    # Selectbox para ano
+    ano = st.selectbox("Selecione o ano:", anos, index=0)
+
+    # Filtrar dados de acordo com seleção
+    df_filtrado = df[(df['country'] == pais) & (df['year'] == ano)]
+
+    # Lista dos poluentes
+    poluentes = ['carbon_monoxide', 'ozone', 'nitrogen_dioxide', 'sulphur_dioxide']
+
+    # Média por mês
+    df_mensal = df_filtrado.groupby('month')[poluentes].mean()
+
+    # Ordenar os meses corretamente
+    meses_ordenados = ['January', 'February', 'March', 'April', 'May', 'June',
+                       'July', 'August', 'September', 'October', 'November', 'December']
+    df_mensal = df_mensal.reindex(meses_ordenados)
+
+    # Plotagem com figsize maior para ocupar a largura
+    fig, ax = plt.subplots(figsize=(15, 5))  # aumente conforme necessário
+
+    cores_linhas = [
+        PALETA_CORES['verde_agua_claro'],
+        PALETA_CORES['verde_agua_medio'],
+        PALETA_CORES['verde_escuro'],
+        PALETA_CORES['azul_petróleo']
+    ]
+
+    labels = ['Monóxido de Carbono (CO)', 'Ozônio (O₃)', 'Dióxido de Nitrogênio (NO₂)', 'Dióxido de Enxofre (SO₂)']
+
+    for poluente, cor, label in zip(poluentes, cores_linhas, labels):
+        ax.plot(df_mensal.index, df_mensal[poluente], marker='o', color=cor, label=label)
+
+    ax.set_title(f'Concentração Mensal de Poluentes - {pais} - {ano}', color=PALETA_CORES['azul_petróleo'])
+    ax.set_xlabel('Mês', color=PALETA_CORES['preto_esverdeado'])
+    ax.set_ylabel('Concentração Média', color=PALETA_CORES['preto_esverdeado'])
+    ax.tick_params(axis='x', rotation=45, colors=PALETA_CORES['preto_esverdeado'])
+    ax.tick_params(axis='y', colors=PALETA_CORES['preto_esverdeado'])
+    ax.legend()
+    ax.grid(True, linestyle='--', alpha=0.5)
+    fig.patch.set_facecolor(PALETA_CORES['fundo'])
+    ax.set_facecolor(PALETA_CORES['fundo'])
+
+    # Converter figura para imagem PNG em buffer
+    buf = io.BytesIO()
+    fig.savefig(buf, format='png', bbox_inches='tight')
+    buf.seek(0)
+
+    # Mostrar imagem sem limitar largura
+    st.image(buf)  # Removido width

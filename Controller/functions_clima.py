@@ -7,7 +7,7 @@ import sqlite3
 def carregar_dados_climaticos():
     conn = sqlite3.connect('weather_database.db')
     query = """
-        SELECT wd.*, l.country, wc.condition_text
+        SELECT wd.last_updated, wd.temperature_celsius, l.country, wc.condition_text
         FROM weather_data wd
         JOIN location l ON wd.location_id = l.location_id
         JOIN weather_condition wc ON wd.condition_id = wc.condition_id
@@ -35,12 +35,12 @@ def consultar_dados_poluentes_pais():
     '''
     conn = sqlite3.connect("weather_database.db")
     df = pd.read_sql_query(query, conn)
-    conn.close()
+
+    df['last_updated'] = pd.to_datetime(df['last_updated'], errors='coerce')
+    df['year'] = df['last_updated'].dt.year
+    df['month'] = df['last_updated'].dt.month_name()
+
     return df
-
-
-
-
 
 def carregar_paises_disponiveis():
     df = carregar_dados_climaticos()
@@ -69,17 +69,13 @@ def detalhe_paises(pais):
 
 
 def detalhe_climatico(pais):
-    # Busca todos os dados sem filtrar na SQL
     df = consultar_dados_poluentes_pais()
-
-    # Filtra os dados pelo país passado como parâmetro
     df_pais = df[df['country'].str.upper() == pais.upper()]
 
     if df_pais.empty:
         st.warning(f"Nenhum dado encontrado para o país: {pais}")
         return
 
-    # Ordena e seleciona o registro mais recente do país
     ultima_temp = df_pais.sort_values('last_updated', ascending=False).iloc[0]
 
     st.subheader("🧪 Níveis de Poluentes (Última Medição)")
@@ -132,7 +128,7 @@ def mes_temp():
     )
 
     fig.update_layout(width=1200, height=600)
-    
+
     st.plotly_chart(fig, key="mapa_exibicao")
     
 

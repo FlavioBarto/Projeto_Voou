@@ -9,6 +9,7 @@ from Controller.kpi_media_assentos import exibir_kpi_media_assentos
 from Controller.functions_voos import taxa_media_ocupacao
 from Controller.kpi_ticket_medio_voo import exibir_ticket_medio_voo
 from Controller.functions_clima import detalhe_paises
+from View.clima import grafico_poluentes_mensal_com_selectbox
 from Controller.functions_clima import mes_temp
 from Controller.functions_clima import detalhe_climatico
 from Controller.grafico_sazonalidade import exibir_dados_volume_passageiros_rota
@@ -180,6 +181,7 @@ def main():
             pais_selecionado = st.selectbox("Selecione o país", paises, key="selectbox_pais_detalhe")
             setar_pais(pais_selecionado)
             detalhe_climatico(pais_selecionado)
+            grafico_poluentes_mensal_com_selectbox()
 
 
     if menu == "Voos":

@@ -9,22 +9,24 @@ from Controller.functions_voos import (
     total_passageiros_pagos,
     taxa_media_ocupacao
 )
-from Controller.kpi_media_assentos import exibir_kpi_media_assentos
-from Controller.kpi_ticket_medio_voo import exibir_ticket_medio_voo
+from Controller.functions_voos import exibir_kpi_media_assentos
+from Controller.functions_voos import exibir_ticket_medio_voo
 from Controller.functions_clima import (
     detalhe_paises,
     mes_temp
 )
-from Controller.grafico_sazonalidade import (
-    exibir_dados_volume_passageiros_rota,
+from View.voos import (
     plot_barras_sazonalidade
 )
-from Controller.grafico_top_visitas import (
-    exibir_dados_total_viagens,
+
+from View.voos import (
     plot_pizza_paises_mais_visitados
 )
 
+from View.voos import exibir_dados_total_viagens
+
 from View.voos import evolucao_mensal_demanda_e_ocupacao
+from View.voos import exibir_dados_volume_passageiros_rota
 from View.clima import (
     grafico_poluentes_mensal_com_selectbox,
     grafico_precipitacao_mensal,

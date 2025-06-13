@@ -187,15 +187,15 @@ def main():
         except Exception as e:
             st.error(f"Erro ao calcular os gráficos: {str(e)}")
 
-        col1 = st.columns(2)
-        with col1[0]:
+        st.divider()
+        col1, col2, col3 = st.columns([1, 1, 1])
+        with col1:
             st.plotly_chart(fig_demanda)
-        with col1[1]:
-            plot_barras_sazonalidade(df_sazonal)
-            
-        col2 = st.columns(1)
-        with col2[0]:
+        with col2:
             plot_pizza_paises_mais_visitados(df_paises)
+        with col3:
+            plot_barras_sazonalidade(df_sazonal)
+
 
 if __name__ == "__main__":
     main()

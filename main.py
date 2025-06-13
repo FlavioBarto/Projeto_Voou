@@ -4,24 +4,35 @@ import os
 import datetime
 from Model.criar_bd_clima import csv_to_sqlite_clima
 from Model.criar_bd_voos import csv_to_sqlite_voo
-from Controller.functions_voos import total_passageiros_pagos
-from Controller.kpi_media_assentos import exibir_kpi_media_assentos
-from Controller.functions_voos import taxa_media_ocupacao
-from Controller.kpi_ticket_medio_voo import exibir_ticket_medio_voo
-from Controller.functions_clima import detalhe_paises
-from View.clima import grafico_poluentes_mensal_com_selectbox
-from Controller.functions_clima import mes_temp
 
-from Controller.grafico_sazonalidade import exibir_dados_volume_passageiros_rota
-from Controller.grafico_sazonalidade import plot_barras_sazonalidade
-from Controller.grafico_top_visitas import exibir_dados_total_viagens
-from Controller.grafico_top_visitas import plot_pizza_paises_mais_visitados
+from Controller.functions_voos import (
+    total_passageiros_pagos,
+    taxa_media_ocupacao
+)
+from Controller.kpi_media_assentos import exibir_kpi_media_assentos
+from Controller.kpi_ticket_medio_voo import exibir_ticket_medio_voo
+from Controller.functions_clima import (
+    detalhe_paises,
+    mes_temp
+)
+from Controller.grafico_sazonalidade import (
+    exibir_dados_volume_passageiros_rota,
+    plot_barras_sazonalidade
+)
+from Controller.grafico_top_visitas import (
+    exibir_dados_total_viagens,
+    plot_pizza_paises_mais_visitados
+)
+
 from View.voos import evolucao_mensal_demanda_e_ocupacao
-from View.clima import grafico_precipitacao_mensal
-from View.clima import grafico_umidade_pizza
-from View.clima import grafico_vento_pressao
-from View.clima import setar_pais
-from View.clima import carregar_paises_disponiveis
+from View.clima import (
+    grafico_poluentes_mensal_com_selectbox,
+    grafico_precipitacao_mensal,
+    grafico_umidade_pizza,
+    grafico_vento_pressao,
+    setar_pais,
+    carregar_paises_disponiveis
+)
 
 def set_page_config():
     st.set_page_config(
@@ -166,16 +177,16 @@ def main():
             passageiros_pagos = 0
 
         cols = st.columns(4)
-        with cols[0]:
+        with cols[0].container(border=True):
             total_passageiros_pagos_formatado = formatar_numero(passageiros_pagos)
             st.metric(label="Total de Passageiros Pagos", value=total_passageiros_pagos_formatado)
-        with cols[1]:
+        with cols[1].container(border=True):
             st.metric(label="Assentos Ocupados Por Voo",
                       value=f"{porcentagem_media_assentos_cheios:.2f}%",
                       help="Porcentagem de Assentos Ocupados por Voos")
-        with cols[2]:
+        with cols[2].container(border=True):
             st.metric("Taxa Média Ocupação", f"{media_taxa_ocupacao:.2f}%")
-        with cols[3]:
+        with cols[3].container(border=True):
             st.metric(label="Ticket Médio dos Voos",
                       value=f"R$ {ticket_medio_voo}",
                       help="Ticket Médio de Todos os Voos")

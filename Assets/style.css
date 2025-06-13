@@ -5,13 +5,33 @@
     padding-right: 1rem;
 }
 
-/* Opcional: reduz espaço entre elementos */
 .element-container {
     margin-bottom: 0.5rem;
 }
 
-/* Remove espaçamento extra ao redor dos títulos */
 h1, h2, h3, h4 {
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
+}
+
+.stTabs [data-baseweb="tab"] { 
+    border-radius: 10px 10px 0 0;
+    margin-right: 5px;
+}
+
+/* Aba ativa */
+.stTabs [aria-selected="true"] {
+    color: #07DAAF !important;
+}
+
+/* Barra inferior da aba ativa */
+.stTabs [data-baseweb="tab-highlight"] {
+    background-color: #07DAAF !important;
+}
+
+/* Efeito hover ao passar o mouse */
+.stTabs [data-baseweb="tab"]:hover {
+    color: #07DAAF !important;
+    background-color: #262730 !important; /* opcional: um tom sutil de cinza escuro */
+    cursor: pointer;
 }

@@ -48,7 +48,7 @@ def plot_pizza_paises_mais_visitados(df_paises, top_n=10):
     
     # 5. Centralizar título
     fig.update_layout(
-        title_x=0.5,
+        title_x=0,
         height=500,
         uniformtext_minsize=12,
         uniformtext_mode='hide',

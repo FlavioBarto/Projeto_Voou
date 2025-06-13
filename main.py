@@ -187,6 +187,7 @@ def main():
         except Exception as e:
             st.error(f"Erro ao calcular os gráficos: {str(e)}")
 
+        st.divider()
         col1, col2, col3 = st.columns([1, 1, 1])
         with col1:
             st.plotly_chart(fig_demanda)

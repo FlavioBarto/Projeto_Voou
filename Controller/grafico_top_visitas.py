@@ -24,7 +24,7 @@ def plot_pizza_paises_mais_visitados(df_paises, top_n=10):
     
     # 2. Selecionar top N e agrupar o restante como "Outros"
     df_top = df_sem_brasil.head(top_n)
-    df_top["pais_destino"] = df_top["pais_destino"].replace("ESTADOS UNIDOS DA AMÉRICA", "EUA")
+    df_top.loc[df_top["pais_destino"] == "ESTADOS UNIDOS DA AMÉRICA", "pais_destino"] = "EUA"
 
     # 3. Criar gráfico sem legenda
     fig = px.pie(

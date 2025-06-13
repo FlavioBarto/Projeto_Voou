@@ -7,7 +7,7 @@ from Model.criar_bd_voos import csv_to_sqlite_voo
 from Controller.functions_voos import total_passageiros_pagos
 from Controller.functions_voos import exibir_kpi_media_assentos
 from Controller.functions_voos import taxa_media_ocupacao
-from Controller.kpi_ticket_medio_voo import exibir_ticket_medio_voo
+from Controller.functions_voos import exibir_ticket_medio_voo
 from Controller.functions_clima import detalhe_paises
 from View.clima import grafico_poluentes_mensal_com_selectbox
 from Controller.functions_clima import mes_temp

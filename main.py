@@ -14,8 +14,8 @@ from Controller.functions_clima import mes_temp
 
 from Controller.grafico_sazonalidade import exibir_dados_volume_passageiros_rota
 from Controller.grafico_sazonalidade import plot_barras_sazonalidade
-from Controller.grafico_top_visitas import exibir_dados_total_viagens
-from Controller.grafico_top_visitas import plot_pizza_paises_mais_visitados
+from View.voos import exibir_dados_total_viagens
+from View.voos import plot_pizza_paises_mais_visitados
 from View.voos import evolucao_mensal_demanda_e_ocupacao
 from View.clima import grafico_precipitacao_mensal
 from View.clima import grafico_umidade_pizza

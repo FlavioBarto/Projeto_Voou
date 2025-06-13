@@ -4,7 +4,6 @@ import seaborn as sns
 import sqlite3
 import streamlit as st
 import io
-from Controller.functions_clima import consultar_dados_poluentes_pais
 
 # Nova Paleta Moderna
 PALETA_CORES = {
@@ -24,19 +23,62 @@ def setar_pais(pais):
     global pais_global
     pais_global = pais
 
-def carregar_dados_climaticos():
+def criar_view_dados_climaticos():
+    """Cria a VIEW vw_dados_climaticos no banco de dados."""
     conn = sqlite3.connect('weather_database.db')
-    query = """
-        SELECT wd.*, l.country, wc.condition_text
+    cursor = conn.cursor()
+
+    cursor.execute("DROP VIEW IF EXISTS vw_dados_climaticos")  # Garante recriação da view
+    cursor.execute("""
+        CREATE VIEW vw_dados_climaticos AS
+        SELECT 
+            wd.last_updated, 
+            wd.temperature_celsius, 
+            wd.precip_mm, 
+            wd.humidity_percentage, 
+            wd.gust_kph, 
+            l.country, 
+            wc.condition_text, 
+            wd.wind_kph, 
+            wd.pressure_mb
         FROM weather_data wd
         JOIN location l ON wd.location_id = l.location_id
         JOIN weather_condition wc ON wd.condition_id = wc.condition_id
-    """
+    """)
+    
+    conn.commit()
+
+def carregar_dados_climaticos():
+    criar_view_dados_climaticos()
+    """Carrega os dados a partir da VIEW vw_dados_climaticos."""
+    conn = sqlite3.connect('weather_database.db')
+    query = "SELECT * FROM vw_dados_climaticos"
     df = pd.read_sql_query(query, conn)
     conn.close()
     df['last_updated'] = pd.to_datetime(df['last_updated'], errors='coerce')
     df['year'] = df['last_updated'].dt.year
     df['month'] = df['last_updated'].dt.month_name()
+    return df
+
+def consultar_dados_poluentes_pais():
+    query = '''
+        SELECT wd.last_updated,
+               l.country,
+               aq.sulphur_dioxide,
+               aq.nitrogen_dioxide,
+               aq.ozone,
+               aq.carbon_monoxide
+        FROM weather_data wd
+        JOIN location l ON wd.location_id = l.location_id
+        JOIN air_quality aq ON wd.weather_id = aq.weather_id
+    '''
+    conn = sqlite3.connect("weather_database.db")
+    df = pd.read_sql_query(query, conn)
+
+    df['last_updated'] = pd.to_datetime(df['last_updated'], errors='coerce')
+    df['year'] = df['last_updated'].dt.year
+    df['month'] = df['last_updated'].dt.month_name()
+
     return df
 
 def carregar_paises_disponiveis():
@@ -74,8 +116,7 @@ def grafico_umidade_pizza(pais=None, ano=None):
         pais = pais_global if pais_global else df['country'].mode()[0]
     if ano is None:
         ano = df['year'].max()
-
-    df_filtrado = df[(df['country'] == pais) & (df['year'] == ano)]
+        df_filtrado = df[(df['country'] == pais) & (df['year'] == ano)]
     humidity_analysis = df_filtrado.groupby('condition_text')['humidity_percentage'].mean().reset_index()
 
     condicoes_desejadas = [

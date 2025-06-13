@@ -2,45 +2,7 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 import sqlite3
-
-# Conectar ao banco de dados
-def carregar_dados_climaticos():
-    conn = sqlite3.connect('weather_database.db')
-    query = """
-        SELECT wd.last_updated, wd.temperature_celsius, l.country, wc.condition_text
-        FROM weather_data wd
-        JOIN location l ON wd.location_id = l.location_id
-        JOIN weather_condition wc ON wd.condition_id = wc.condition_id
-    """
-    df = pd.read_sql_query(query, conn)
-    conn.close()
-
-    df['last_updated'] = pd.to_datetime(df['last_updated'], errors='coerce')
-    df['year'] = df['last_updated'].dt.year
-    df['month'] = df['last_updated'].dt.month_name()
-    return df
-
-def consultar_dados_poluentes_pais():
-    query = '''
-        SELECT wd.last_updated,
-               l.country,
-               wd.temperature_celsius,
-               aq.sulphur_dioxide,
-               aq.nitrogen_dioxide,
-               aq.ozone,
-               aq.carbon_monoxide
-        FROM weather_data wd
-        JOIN location l ON wd.location_id = l.location_id
-        JOIN air_quality aq ON wd.weather_id = aq.weather_id
-    '''
-    conn = sqlite3.connect("weather_database.db")
-    df = pd.read_sql_query(query, conn)
-
-    df['last_updated'] = pd.to_datetime(df['last_updated'], errors='coerce')
-    df['year'] = df['last_updated'].dt.year
-    df['month'] = df['last_updated'].dt.month_name()
-
-    return df
+from View.clima import carregar_dados_climaticos
 
 def carregar_paises_disponiveis():
     df = carregar_dados_climaticos()
@@ -66,11 +28,6 @@ def detalhe_paises(pais):
         st.metric("Condição", ultima_temp['condition_text'])
     with cols[3].container(border = True):
         st.metric("Última atualização", ultima_temp['last_updated'].strftime('%Y-%m-%d %H:%M'))
-
-
-
-
-
 
 def mes_temp():
     df = carregar_dados_climaticos()

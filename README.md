@@ -60,23 +60,6 @@ O **Projeto Voou** é uma solução analítica integrada que cruza dados meteoro
 - **Processamento**: Pandas, NumPy
 - **Estilos**: CSS personalizado
 
-## ▶️ Como Executar
-
-1. Clone o repositório:
-```bash
-git clone https://github.com/FlavioBarto/Projeto_Voou
-```
-Instale as dependências:
-
-```bash
-pip install streamlit pandas plotly matplotlib seaborn
-```
-Execute o aplicativo:
-
-```bash
-streamlit run .\main.py
-```
-
 ## 🧱 Estrutura do Projeto
 <pre>
 Projeto_Voou/
@@ -98,6 +81,23 @@ Projeto_Voou/
 ├── weather_database.db             # Banco de dados clima
 └── main.py                         # Aplicação principal
 </pre>
+
+## ▶️ Como Executar
+
+1. Clone o repositório:
+```bash
+git clone https://github.com/FlavioBarto/Projeto_Voou
+```
+Instale as dependências:
+
+```bash
+pip install streamlit pandas plotly matplotlib seaborn
+```
+Execute o aplicativo:
+
+```bash
+streamlit run .\main.py
+```
 
 ## 🤝 Contribuições
 Contribuições são bem-vindas!<br>

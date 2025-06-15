@@ -1,7 +1,7 @@
 # Projeto Voou 🌍✈️
 
 ## 📌 Visão Geral
-O **Projeto Voou** é uma solução analítica integrada que combina dados meteorológicos e de aviação civil para suporte decisório em agronomia e marketing aéreo.
+O **Projeto Voou** é uma solução analítica integrada que cruza dados meteorológicos e de aviação civil com o objetivo de fornecer suporte decisório para as áreas de agronomia e marketing aéreo. Ele utiliza um modelo de arquitetura MVC simples em Python para organizar a manipulação, visualização e análise dos dados.
 
 ## 👥 Personas-Alvo
 
@@ -16,20 +16,20 @@ O **Projeto Voou** é uma solução analítica integrada que combina dados meteo
 **Benefícios**:
 - Análise histórica de padrões climáticos  
 - Alertas em tempo real para eventos críticos  
-- Otimização de calendários de plantio  
+- Otimização de calendários agrícola
 
 ### ✈️ Aviação Comercial
 **Persona**: Gerente de Marketing Aéreo 
 
 **Necessidades**:
 - Análise de desempenho de rotas
-- Identificação de oportunidades de mercado
-- Precificação dinâmica
+- Identificação de sazonalidades
+- Precificação estratégica
 
 **Benefícios**:
 - Visualização de ocupação por rota  
 - Detecção de padrões sazonais  
-- Análise de ROI em rotas estratégicas  
+- Análise de ROI por destino
 
 ## 📊 Dashboards
 
@@ -41,38 +41,16 @@ O **Projeto Voou** é uma solução analítica integrada que combina dados meteo
 🔥 Última Temperatura Registrada
 
 ⛅ Condição Climática Atual
-
-⏱️ Última Atualização dos Dados
-```
-
-**Gráficos Disponíveis**:
-```
-Mapa-Múndi Interativo: Visualização da temperatura por país
-
-Precipitação Mensal: Análise por país e ano selecionado
-
-Distribuição de Umidade: Gráfico de pizza mostrando a umidade média por condição climática
 ```
 
 ### ✈️ Módulo Voos
 **KPIs Principais**:
 ```
-🧑‍🤝‍🧑 Total de Passageiros Pagos (período selecionado)
+📊 Taxa Ocupação Média (RPK/ASK)
 
-💺 Média de Assentos Oferecidos por Voo
+🧳 Volume de Passageiros por Aeroporto
 
-📊 Taxa Média de Ocupação (RPK/ASK)
-
-🛣️ Número Total de Rotas Ativas
-```
-
-**Gráficos Disponíveis**:
-```
-Evolução Mensal: Linha temporal da demanda e ocupação
-
-Sazonalidade: Heatmap do volume de passageiros por rota
-
-Relação Ocupação x Capacidade: Dispersão entre passageiros pagos e assentos oferecidos
+📅 Picos de Demanda e Sazonalidades
 ```
 
 ## 🛠️ Tecnologias Utilizadas
@@ -82,7 +60,7 @@ Relação Ocupação x Capacidade: Dispersão entre passageiros pagos e assentos
 - **Processamento**: Pandas, NumPy
 - **Estilos**: CSS personalizado
 
-## 🚀 Como Executar
+## ▶️ Como Executar
 
 1. Clone o repositório:
 ```bash
@@ -91,7 +69,7 @@ git clone https://github.com/FlavioBarto/Projeto_Voou
 Instale as dependências:
 
 ```bash
-pip install pandas streamlit matplotlib seaborn
+pip install streamlit pandas plotly matplotlib seaborn
 ```
 Execute o aplicativo:
 
@@ -99,7 +77,7 @@ Execute o aplicativo:
 streamlit run .\main.py
 ```
 
-📦 Estrutura de Arquivos:
+## 🧱 Estrutura do Projeto
 <pre>
 Projeto_Voou/
 ├── arquivos_csv/                   # Arquivos de dados brutos
@@ -121,8 +99,9 @@ Projeto_Voou/
 └── main.py                         # Aplicação principal
 </pre>
 
-📝 Licença
-Este projeto está licenciado sob a licença MIT - veja o arquivo LICENSE para detalhes.
+## 🤝 Contribuições
+Contribuições são bem-vindas!<br>
+Se quiser sugerir melhorias ou reportar bugs, sinta-se à vontade para abrir uma issue ou pull request.
 
-✉️ Contato
-Para dúvidas ou sugestões, entre em contato com os desenvolvedores.
+## 📄 Licença
+Este projeto está sob a licença MIT. Consulte o arquivo ```LICENSE``` para mais detalhes.

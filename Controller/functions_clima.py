@@ -1,7 +1,6 @@
 import pandas as pd
 import plotly.express as px
 import streamlit as st
-import sqlite3
 from View.clima import carregar_dados_climaticos
 
 def carregar_paises_disponiveis():

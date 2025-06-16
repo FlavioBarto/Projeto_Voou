@@ -2,6 +2,25 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
+PALETA_CORES = {
+    'verde_agua_claro': '#00B38E',
+    'verde_agua_medio': '#21C5B5',
+    'verde_escuro': '#349B90',
+    'azul_petróleo': '#38706B',
+    'cinza_escuro': '#2E4643',
+    'preto_esverdeado': '#2B3332',
+    'fundo': '#FFFFFF'
+}
+
+cores_plotly = [
+        PALETA_CORES['verde_agua_claro'],
+        PALETA_CORES['verde_agua_medio'],
+        PALETA_CORES['verde_escuro'],
+        PALETA_CORES['azul_petróleo'],
+        PALETA_CORES['cinza_escuro'],
+        PALETA_CORES['preto_esverdeado']
+    ]
+
 def evolucao_mensal_demanda_e_ocupacao(conn_voo, data_inicio, data_fim):
     query = f"""
     SELECT 
@@ -34,7 +53,8 @@ def evolucao_mensal_demanda_e_ocupacao(conn_voo, data_inicio, data_fim):
         y="total_rpk_bilhoes",
         title="Evolução Mensal da Demanda (RPK)",
         labels={'data': 'Mês', 'total_rpk_bilhoes': 'Demanda (Bilhões de RPK)'},
-        markers=True
+        markers=True,
+        color_discrete_sequence=cores_plotly
     )
 
     fig.update_layout(
@@ -85,7 +105,7 @@ def plot_pizza_paises_mais_visitados(df_paises, top_n=10):
         values='total_passageiros',
         title=f'Top {top_n} Países Mais Visitados',
         labels={'pais_destino': 'País'},
-        color_discrete_sequence=px.colors.qualitative.Set3
+        color_discrete_sequence=cores_plotly
     )
     
     # 4. Remover legenda e ajustar labels
@@ -149,7 +169,7 @@ def plot_barras_sazonalidade(df_sazonal, metrica="passageiros_pagos"):
             'mes': 'Mês',
             metrica: names.get(metrica, metrica),
         },
-        color_discrete_sequence=px.colors.qualitative.Pastel
+        color_discrete_sequence=cores_plotly
     )
 
     fig.update_traces(

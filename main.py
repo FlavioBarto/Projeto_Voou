@@ -178,7 +178,7 @@ def main():
             st.error(f"Erro ao calcular os KPIs: {str(e)}")
             passageiros_pagos = 0
 
-        cols = st.columns(4)
+        cols = st.columns(3)
         with cols[0].container(border=True):
             total_passageiros_pagos_formatado = formatar_numero(passageiros_pagos)
             st.metric(label="Total de Passageiros Pagos", value=total_passageiros_pagos_formatado)
@@ -188,10 +188,10 @@ def main():
                       help="Porcentagem de Assentos Ocupados por Voos")
         with cols[2].container(border=True):
             st.metric("Taxa Média Ocupação", f"{media_taxa_ocupacao:.2f}%")
-        with cols[3].container(border=True):
-            st.metric(label="Ticket Médio dos Voos",
-                      value=f"R$ {ticket_medio_voo}",
-                      help="Ticket Médio de Todos os Voos")
+        # with cols[2].container(border=True):
+        #     st.metric(label="Ticket Médio dos Voos",
+        #               value=f"R$ {ticket_medio_voo}",
+        #               help="Ticket Médio de Todos os Voos")
 
         try:
             df_sazonal = exibir_dados_volume_passageiros_rota(conn_voo, data_inicio, data_fim)

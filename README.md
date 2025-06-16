@@ -5,8 +5,8 @@ O **Projeto Voou** é uma solução analítica integrada que cruza dados meteoro
 
 ## 👥 Personas-Alvo
 
-### 🌾 Agronomia
-**Persona**: Gestor Agrícola 
+### ☁️ Tempo & Clima
+**Persona**: Jornalista de Clima
 
 **Necessidades**:
 - Monitoramento microclimático
